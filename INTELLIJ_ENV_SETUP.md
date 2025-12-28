@@ -12,23 +12,24 @@ This guide provides the environment variables needed to run the RMS Service in I
 Copy this entire line and paste it into IntelliJ's Run Configuration > Environment Variables field:
 
 ```
-SPRING_PROFILES_ACTIVE=dev,api-docs;SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=https://rmsauth.atparui.com/realms/jhipster;SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal;SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal;MULTI_TENANT_GATEWAY_BASE_URL=http://localhost:8082;SPRING_CLOUD_CONSUL_HOST=localhost;SPRING_CLOUD_CONSUL_PORT=8500;SERVER_PORT=8083
+SPRING_PROFILES_ACTIVE=dev,api-docs;KEYCLOAK_BASE_URL=https://rmsauth.atparui.com;SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=https://rmsauth.atparui.com/realms/gateway;SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=rms-service;SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=<your-rms-service-client-secret>;MULTI_TENANT_GATEWAY_BASE_URL=http://localhost:8082;SPRING_CLOUD_CONSUL_HOST=localhost;SPRING_CLOUD_CONSUL_PORT=8500;SERVER_PORT=8083
 ```
 
 ### Option 2: Individual Variables (Better for readability)
 
 In IntelliJ Run Configuration > Environment Variables, add each variable:
 
-| Variable Name                                                   | Value                                         |
-| --------------------------------------------------------------- | --------------------------------------------- |
-| `SPRING_PROFILES_ACTIVE`                                        | `dev,api-docs`                                |
-| `SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI`        | `https://rmsauth.atparui.com/realms/jhipster` |
-| `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID`     | `internal`                                    |
-| `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET` | `internal`                                    |
-| `MULTI_TENANT_GATEWAY_BASE_URL`                                 | `http://localhost:8082`                       |
-| `SPRING_CLOUD_CONSUL_HOST`                                      | `localhost`                                   |
-| `SPRING_CLOUD_CONSUL_PORT`                                      | `8500`                                        |
-| `SERVER_PORT`                                                   | `8083`                                        |
+| Variable Name                                                   | Value                                        |
+| --------------------------------------------------------------- | -------------------------------------------- |
+| `SPRING_PROFILES_ACTIVE`                                        | `dev,api-docs`                               |
+| `KEYCLOAK_BASE_URL`                                             | `https://rmsauth.atparui.com`                |
+| `SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI`        | `https://rmsauth.atparui.com/realms/gateway` |
+| `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID`     | `rms-service`                                |
+| `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET` | `<your-rms-service-client-secret>`           |
+| `MULTI_TENANT_GATEWAY_BASE_URL`                                 | `http://localhost:8082`                      |
+| `SPRING_CLOUD_CONSUL_HOST`                                      | `localhost`                                  |
+| `SPRING_CLOUD_CONSUL_PORT`                                      | `8500`                                       |
+| `SERVER_PORT`                                                   | `8083`                                       |
 
 ## Step-by-Step Instructions
 
@@ -61,10 +62,17 @@ In IntelliJ Run Configuration > Environment Variables, add each variable:
 
 ### Keycloak Configuration
 
-- **URL**: `https://rmsauth.atparui.com/realms/jhipster`
-  - If your Keycloak uses HTTP instead of HTTPS, change to: `http://rmsauth.atparui.com/realms/jhipster`
-- **Client ID/Secret**: `internal` (default JHipster configuration)
-  - Verify these match your Keycloak realm configuration
+- **Base URL**: `https://rmsauth.atparui.com`
+  - If your Keycloak uses HTTP instead of HTTPS, change accordingly
+- **Default Issuer URI**: `https://rmsauth.atparui.com/realms/gateway`
+  - This is used as a fallback. The service uses dynamic JWT decoding to validate tokens from any tenant realm.
+- **Client ID**: `rms-service`
+  - This client must exist in the `gateway` realm in Keycloak
+  - The same client will be automatically created in each tenant realm by the gateway app
+- **Client Secret**: Get this from Keycloak Admin Console
+  1. Go to Keycloak Admin Console → `gateway` realm → Clients → `rms-service`
+  2. Copy the client secret from the "Credentials" tab
+  3. Set this value in `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET`
 
 ### Gateway Configuration
 
@@ -95,8 +103,12 @@ In IntelliJ Run Configuration > Environment Variables, add each variable:
 ### Keycloak Authentication Issues
 
 1. **Check Keycloak URL**: Verify `rmsauth.atparui.com` is accessible
-2. **Check Realm**: Ensure the realm name is `jhipster` (or update the URL accordingly)
-3. **Check Client Configuration**: Verify the client ID `internal` exists in Keycloak with the correct secret
+2. **Check Gateway Realm**: Ensure the `gateway` realm exists in Keycloak
+3. **Check Client Configuration**:
+   - Verify the client `rms-service` exists in the `gateway` realm
+   - Ensure the client secret matches the value in your environment variables
+   - The service uses dynamic JWT decoding, so it can validate tokens from any tenant realm
+4. **Check Token Issuer**: If tokens are from tenant realms, ensure the tenant realm exists and has the `rms-service` client
 
 ### Port Conflicts
 
