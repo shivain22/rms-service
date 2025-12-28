@@ -314,31 +314,32 @@ public class PaymentService {
                     .filter(amount -> amount != null && amount.compareTo(BigDecimal.ZERO) > 0)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
                 summary.setTotalAmount(totalAmount);
-                summary.setTotalTransactions(payments.size());
+                summary.setTotalTransactions(Integer.valueOf(payments.size()));
 
                 // Group by payment method
                 Map<UUID, PaymentSummaryDTO.PaymentMethodSummaryDTO> methodMap = new HashMap<>();
-                payments.forEach(payment -> {
+                for (PaymentDTO payment : payments) {
                     if (
                         payment.getAmount() != null &&
                         payment.getAmount().compareTo(BigDecimal.ZERO) > 0 &&
                         payment.getPaymentMethod() != null
                     ) {
                         UUID methodId = payment.getPaymentMethod().getId();
-                        PaymentSummaryDTO.PaymentMethodSummaryDTO methodSummary = methodMap.computeIfAbsent(methodId, id -> {
-                            PaymentSummaryDTO.PaymentMethodSummaryDTO summaryDTO = new PaymentSummaryDTO.PaymentMethodSummaryDTO();
-                            summaryDTO.setPaymentMethodId(id);
-                            summaryDTO.setPaymentMethodName(
+                        PaymentSummaryDTO.PaymentMethodSummaryDTO methodSummary = methodMap.get(methodId);
+                        if (methodSummary == null) {
+                            methodSummary = new PaymentSummaryDTO.PaymentMethodSummaryDTO();
+                            methodSummary.setPaymentMethodId(methodId);
+                            methodSummary.setPaymentMethodName(
                                 payment.getPaymentMethod().getMethodName() != null ? payment.getPaymentMethod().getMethodName() : "UNKNOWN"
                             );
-                            summaryDTO.setTotalAmount(BigDecimal.ZERO);
-                            summaryDTO.setTransactionCount(0);
-                            return summaryDTO;
-                        });
+                            methodSummary.setTotalAmount(BigDecimal.ZERO);
+                            methodSummary.setTransactionCount(0);
+                            methodMap.put(methodId, methodSummary);
+                        }
                         methodSummary.setTotalAmount(methodSummary.getTotalAmount().add(payment.getAmount()));
                         methodSummary.setTransactionCount(methodSummary.getTransactionCount() + 1);
                     }
-                });
+                }
 
                 summary.setMethodSummaries(new java.util.ArrayList<>(methodMap.values()));
                 return summary;
