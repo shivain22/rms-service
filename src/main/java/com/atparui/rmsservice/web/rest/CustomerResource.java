@@ -252,4 +252,51 @@ public class CustomerResource {
             )
             .map(headers -> ResponseEntity.ok().headers(headers).body(customerService.search(query, pageable)));
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/customers/{id}/orders} : Get customer orders
+     *
+     * @param id the id of the customer
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of orders
+     */
+    @GetMapping("/{id}/orders")
+    public Mono<ResponseEntity<List<com.atparui.rmsservice.service.dto.OrderDTO>>> getCustomerOrders(@PathVariable UUID id) {
+        LOG.debug("REST request to get customer orders : {}", id);
+        return customerService.getCustomerOrders(id).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code GET /api/customers/{id}/loyalty} : Get customer loyalty
+     *
+     * @param id the id of the customer
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and loyalty DTO
+     */
+    @GetMapping("/{id}/loyalty")
+    public Mono<ResponseEntity<com.atparui.rmsservice.service.dto.CustomerLoyaltyDTO>> getCustomerLoyalty(@PathVariable UUID id) {
+        LOG.debug("REST request to get customer loyalty : {}", id);
+        return customerService
+            .getCustomerLoyalty(id)
+            .map(result -> ResponseEntity.ok().body(result))
+            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/customers/{id}/loyalty/add-points} : Add loyalty points
+     *
+     * @param id the id of the customer
+     * @param request the points addition request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and updated loyalty DTO
+     */
+    @PostMapping("/{id}/loyalty/add-points")
+    public Mono<ResponseEntity<com.atparui.rmsservice.service.dto.CustomerLoyaltyDTO>> addLoyaltyPoints(
+        @PathVariable UUID id,
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.LoyaltyPointsRequestDTO request
+    ) {
+        LOG.debug("REST request to add loyalty points : {} - {}", id, request);
+        return customerService.addLoyaltyPoints(id, request).map(result -> ResponseEntity.ok().body(result));
+    }
 }

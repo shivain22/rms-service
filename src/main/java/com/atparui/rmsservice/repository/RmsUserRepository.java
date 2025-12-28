@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 public interface RmsUserRepository extends ReactiveCrudRepository<RmsUser, UUID>, RmsUserRepositoryInternal {
     Flux<RmsUser> findAllBy(Pageable pageable);
 
+    Mono<RmsUser> findByExternalUserId(String externalUserId);
+
     @Override
     <S extends RmsUser> Mono<S> save(S entity);
 

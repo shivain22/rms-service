@@ -29,6 +29,12 @@ public interface MenuItemRepository extends ReactiveCrudRepository<MenuItem, UUI
     @Query("SELECT * FROM menu_item entity WHERE entity.menu_category_id IS NULL")
     Flux<MenuItem> findAllWhereMenuCategoryIsNull();
 
+    @Query("SELECT * FROM menu_item entity WHERE entity.branch_id = :branchId AND entity.is_available = true")
+    Flux<MenuItem> findAvailableByBranchId(UUID branchId);
+
+    @Query("SELECT * FROM menu_item entity WHERE entity.menu_category_id = :categoryId")
+    Flux<MenuItem> findByCategoryId(UUID categoryId);
+
     @Override
     <S extends MenuItem> Mono<S> save(S entity);
 

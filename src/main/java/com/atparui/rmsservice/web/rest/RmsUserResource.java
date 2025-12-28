@@ -3,6 +3,7 @@ package com.atparui.rmsservice.web.rest;
 import com.atparui.rmsservice.repository.RmsUserRepository;
 import com.atparui.rmsservice.service.RmsUserService;
 import com.atparui.rmsservice.service.dto.RmsUserDTO;
+import com.atparui.rmsservice.service.dto.UserSyncLogDTO;
 import com.atparui.rmsservice.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -251,5 +252,48 @@ public class RmsUserResource {
                 )
             )
             .map(headers -> ResponseEntity.ok().headers(headers).body(rmsUserService.search(query, pageable)));
+    }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/rms-users/external/{externalUserId}} : Get user by external ID
+     *
+     * @param externalUserId the external user ID
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and user DTO
+     */
+    @GetMapping("/external/{externalUserId}")
+    public Mono<ResponseEntity<RmsUserDTO>> getUserByExternalId(@PathVariable String externalUserId) {
+        LOG.debug("REST request to get user by external ID : {}", externalUserId);
+        return rmsUserService
+            .findByExternalUserId(externalUserId)
+            .map(result -> ResponseEntity.ok().body(result))
+            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/rms-users/{id}/sync} : Sync user with Gateway/Keycloak
+     *
+     * @param id the id of the user to sync
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and sync result
+     */
+    @PostMapping("/{id}/sync")
+    public Mono<ResponseEntity<UserSyncLogDTO>> syncUser(@PathVariable UUID id) {
+        LOG.debug("REST request to sync user with Gateway/Keycloak : {}", id);
+        return rmsUserService.syncUserWithGateway(id).map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code POST /api/rms-users/bulk-sync} : Bulk sync users with Gateway/Keycloak
+     *
+     * @param userIds list of user IDs to sync
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and sync results
+     */
+    @PostMapping("/bulk-sync")
+    public Mono<ResponseEntity<List<UserSyncLogDTO>>> bulkSyncUsers(@RequestBody List<UUID> userIds) {
+        LOG.debug("REST request to bulk sync users : {}", userIds);
+        return rmsUserService.bulkSyncUsers(userIds).collectList().map(result -> ResponseEntity.ok().body(result));
     }
 }

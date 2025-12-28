@@ -154,4 +154,55 @@ public class BranchTableService {
         LOG.debug("Request to search for a page of BranchTables for query {}", query);
         return branchTableSearchRepository.search(query, pageable).map(branchTableMapper::toDto);
     }
+
+    // jhipster-needle-service-impl-add-method - JHipster will add methods here
+
+    /**
+     * Find available tables by branch ID
+     *
+     * @param branchId the branch ID
+     * @return the list of available table DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<BranchTableDTO> findAvailableByBranchId(UUID branchId) {
+        LOG.debug("Request to find available BranchTables by branch ID : {}", branchId);
+        return branchTableRepository.findAvailableByBranchId(branchId).map(branchTableMapper::toDto);
+    }
+
+    /**
+     * Find tables by branch ID and status
+     *
+     * @param branchId the branch ID
+     * @param status the table status
+     * @return the list of table DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<BranchTableDTO> findByBranchIdAndStatus(UUID branchId, String status) {
+        LOG.debug("Request to find BranchTables by branch ID and status : {} - {}", branchId, status);
+        return branchTableRepository.findByBranchIdAndStatus(branchId, status).map(branchTableMapper::toDto);
+    }
+
+    /**
+     * Update table status
+     *
+     * @param id the id of the table
+     * @param status the new status
+     * @return the updated table DTO
+     */
+    public Mono<BranchTableDTO> updateStatus(UUID id, String status) {
+        LOG.debug("Request to update BranchTable status : {} - {}", id, status);
+        return branchTableRepository
+            .findById(id)
+            .switchIfEmpty(Mono.error(new RuntimeException("BranchTable not found")))
+            .map(branchTable -> {
+                branchTable.setStatus(status);
+                return branchTable;
+            })
+            .flatMap(branchTableRepository::save)
+            .flatMap(savedBranchTable -> {
+                branchTableSearchRepository.save(savedBranchTable);
+                return Mono.just(savedBranchTable);
+            })
+            .map(branchTableMapper::toDto);
+    }
 }

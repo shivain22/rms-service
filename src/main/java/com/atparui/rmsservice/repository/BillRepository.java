@@ -35,6 +35,11 @@ public interface BillRepository extends ReactiveCrudRepository<Bill, UUID>, Bill
     @Query("SELECT * FROM bill entity WHERE entity.customer_id IS NULL")
     Flux<Bill> findAllWhereCustomerIsNull();
 
+    @Query(
+        "SELECT * FROM bill entity WHERE entity.branch_id = :branchId AND entity.bill_date >= :startDate AND entity.bill_date <= :endDate"
+    )
+    Flux<Bill> findByBranchIdAndBillDateBetween(UUID branchId, java.time.Instant startDate, java.time.Instant endDate);
+
     @Override
     <S extends Bill> Mono<S> save(S entity);
 

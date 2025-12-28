@@ -252,4 +252,78 @@ public class BillResource {
             )
             .map(headers -> ResponseEntity.ok().headers(headers).body(billService.search(query, pageable)));
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/bills/{id}/breakdown} : Get bill with breakdown
+     *
+     * @param id the id of the bill
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and bill breakdown DTO
+     */
+    @GetMapping("/{id}/breakdown")
+    public Mono<ResponseEntity<com.atparui.rmsservice.service.dto.BillBreakdownDTO>> getBillBreakdown(@PathVariable UUID id) {
+        LOG.debug("REST request to get bill breakdown : {}", id);
+        return billService
+            .getBillBreakdown(id)
+            .map(result -> ResponseEntity.ok().body(result))
+            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+    }
+
+    /**
+     * {@code GET /api/bills/branch/{branchId}/date-range} : Get bills by date range
+     *
+     * @param branchId the branch ID
+     * @param startDate the start date
+     * @param endDate the end date
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of bills
+     */
+    @GetMapping("/branch/{branchId}/date-range")
+    public Mono<ResponseEntity<List<BillDTO>>> getBillsByDateRange(
+        @PathVariable UUID branchId,
+        @RequestParam @org.springframework.format.annotation.DateTimeFormat(
+            iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
+        ) java.time.Instant startDate,
+        @RequestParam @org.springframework.format.annotation.DateTimeFormat(
+            iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
+        ) java.time.Instant endDate
+    ) {
+        LOG.debug("REST request to get bills by date range : {} - {} to {}", branchId, startDate, endDate);
+        return billService
+            .findByBranchIdAndDateRange(branchId, startDate, endDate)
+            .collectList()
+            .map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/bills/generate} : Generate bill from order
+     *
+     * @param request the bill generation request
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and bill DTO
+     */
+    @PostMapping("/generate")
+    public Mono<ResponseEntity<BillDTO>> generateBill(
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.BillGenerationRequestDTO request
+    ) {
+        LOG.debug("REST request to generate bill : {}", request);
+        return billService.generateBillFromOrder(request).map(result -> ResponseEntity.status(HttpStatus.CREATED).body(result));
+    }
+
+    /**
+     * {@code POST /api/bills/{id}/apply-discount} : Apply discount to bill
+     *
+     * @param id the id of the bill
+     * @param request the discount application request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and updated bill DTO
+     */
+    @PostMapping("/{id}/apply-discount")
+    public Mono<ResponseEntity<BillDTO>> applyDiscount(
+        @PathVariable UUID id,
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.DiscountApplicationRequestDTO request
+    ) {
+        LOG.debug("REST request to apply discount to bill : {} - {}", id, request);
+        return billService.applyDiscount(id, request).map(result -> ResponseEntity.ok().body(result));
+    }
 }

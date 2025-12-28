@@ -2,6 +2,7 @@ package com.atparui.rmsservice.web.rest;
 
 import com.atparui.rmsservice.repository.UserBranchRoleRepository;
 import com.atparui.rmsservice.service.UserBranchRoleService;
+import com.atparui.rmsservice.service.dto.UserBranchRoleAssignmentDTO;
 import com.atparui.rmsservice.service.dto.UserBranchRoleDTO;
 import com.atparui.rmsservice.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.ForwardedHeaderUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -222,5 +224,48 @@ public class UserBranchRoleResource {
                         .build()
                 )
             );
+    }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/user-branch-roles/branch/{branchId}/role/{role}} : Get users by branch and role
+     *
+     * @param branchId the branch ID
+     * @param role the role name
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of user branch roles
+     */
+    @GetMapping("/branch/{branchId}/role/{role}")
+    public Mono<ResponseEntity<List<UserBranchRoleDTO>>> getUsersByBranchAndRole(@PathVariable UUID branchId, @PathVariable String role) {
+        LOG.debug("REST request to get users by branch and role : {} - {}", branchId, role);
+        return userBranchRoleService.findByBranchIdAndRole(branchId, role).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/user-branch-roles/assign} : Assign role to user for branch
+     *
+     * @param assignmentDTO the assignment details
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and user branch role DTO
+     */
+    @PostMapping("/assign")
+    public Mono<ResponseEntity<UserBranchRoleDTO>> assignRole(@Valid @RequestBody UserBranchRoleAssignmentDTO assignmentDTO) {
+        LOG.debug("REST request to assign role : {}", assignmentDTO);
+        return userBranchRoleService.assignRole(assignmentDTO).map(result -> ResponseEntity.status(HttpStatus.CREATED).body(result));
+    }
+
+    // jhipster-needle-rest-add-put-method - JHipster will add put methods here
+
+    /**
+     * {@code PUT /api/user-branch-roles/{id}/revoke} : Revoke role from user
+     *
+     * @param id the id of the user branch role
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)}
+     */
+    @PutMapping("/{id}/revoke")
+    public Mono<ResponseEntity<UserBranchRoleDTO>> revokeRole(@PathVariable UUID id) {
+        LOG.debug("REST request to revoke role : {}", id);
+        return userBranchRoleService.revokeRole(id).map(result -> ResponseEntity.ok().body(result));
     }
 }

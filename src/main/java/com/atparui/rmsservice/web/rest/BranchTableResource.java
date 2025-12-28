@@ -253,4 +253,50 @@ public class BranchTableResource {
             )
             .map(headers -> ResponseEntity.ok().headers(headers).body(branchTableService.search(query, pageable)));
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/branch-tables/branch/{branchId}/available} : Get available tables
+     *
+     * @param branchId the branch ID
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of available tables
+     */
+    @GetMapping("/branch/{branchId}/available")
+    public Mono<ResponseEntity<List<BranchTableDTO>>> getAvailableTables(@PathVariable UUID branchId) {
+        LOG.debug("REST request to get available tables for branch : {}", branchId);
+        return branchTableService.findAvailableByBranchId(branchId).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code GET /api/branch-tables/branch/{branchId}/status/{status}} : Get tables by status
+     *
+     * @param branchId the branch ID
+     * @param status the table status
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of tables
+     */
+    @GetMapping("/branch/{branchId}/status/{status}")
+    public Mono<ResponseEntity<List<BranchTableDTO>>> getTablesByStatus(@PathVariable UUID branchId, @PathVariable String status) {
+        LOG.debug("REST request to get tables by status : {} - {}", branchId, status);
+        return branchTableService.findByBranchIdAndStatus(branchId, status).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-put-method - JHipster will add put methods here
+
+    /**
+     * {@code PUT /api/branch-tables/{id}/status} : Update table status
+     *
+     * @param id the id of the table
+     * @param request the status update request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and updated table DTO
+     */
+    @PutMapping("/{id}/status")
+    public Mono<ResponseEntity<BranchTableDTO>> updateTableStatus(
+        @PathVariable UUID id,
+        @RequestBody java.util.Map<String, String> request
+    ) {
+        String status = request.get("status");
+        LOG.debug("REST request to update table status : {} - {}", id, status);
+        return branchTableService.updateStatus(id, status).map(result -> ResponseEntity.ok().body(result));
+    }
 }

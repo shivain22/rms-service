@@ -3,8 +3,8 @@ package com.atparui.rmsservice.web.rest;
 import com.atparui.rmsservice.config.audit.AuditedEntity;
 import com.atparui.rmsservice.security.AuthoritiesConstants;
 import com.atparui.rmsservice.web.rest.dto.EntityAuditEvent;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
+import org.springframework.data.domain.Persistable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,9 +38,6 @@ import tech.jhipster.web.util.PaginationUtil;
 public class JaversEntityAuditResource {
 
     private final Logger log = LoggerFactory.getLogger(JaversEntityAuditResource.class);
-
-    @PersistenceContext
-    private EntityManager manager;
 
     private final Javers javers;
 
@@ -112,13 +109,48 @@ public class JaversEntityAuditResource {
         @RequestParam(value = "entityId") String entityId,
         @RequestParam(value = "commitVersion") Long commitVersion
     ) throws ClassNotFoundException {
-        var entityInformation = JpaEntityInformationSupport.getEntityInformation(auditedEntity.getEntityClass(), manager);
-        var id = conversionService.convert(entityId, entityInformation.getIdType());
+        Class<?> entityClass = auditedEntity.getEntityClass();
+        Class<?> idType = getIdType(entityClass);
+        Object id = conversionService.convert(entityId, idType);
 
-        var jqlQuery = QueryBuilder.byInstanceId(id, auditedEntity.getEntityClass()).limit(1).withVersion(commitVersion - 1);
+        var jqlQuery = QueryBuilder.byInstanceId(id, entityClass).limit(1).withVersion(commitVersion - 1);
         var prev = EntityAuditEvent.fromJaversSnapshot(javers.findSnapshots(jqlQuery.build()).get(0));
 
         return new ResponseEntity<>(prev, HttpStatus.OK);
+    }
+
+    /**
+     * Extracts the ID type from an entity class that implements Persistable.
+     *
+     * @param entityClass the entity class
+     * @return the ID type class
+     */
+    private Class<?> getIdType(Class<?> entityClass) {
+        Type[] interfaces = entityClass.getGenericInterfaces();
+        for (Type interfaceType : interfaces) {
+            if (interfaceType instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) interfaceType;
+                if (parameterizedType.getRawType() == Persistable.class) {
+                    Type[] typeArguments = parameterizedType.getActualTypeArguments();
+                    if (typeArguments.length > 0 && typeArguments[0] instanceof Class) {
+                        return (Class<?>) typeArguments[0];
+                    }
+                }
+            }
+        }
+        // Fallback: check superclass if entity extends another class
+        Type superclass = entityClass.getGenericSuperclass();
+        if (superclass instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) superclass;
+            if (parameterizedType.getRawType() == Persistable.class) {
+                Type[] typeArguments = parameterizedType.getActualTypeArguments();
+                if (typeArguments.length > 0 && typeArguments[0] instanceof Class) {
+                    return (Class<?>) typeArguments[0];
+                }
+            }
+        }
+        // Default fallback to UUID if not found (most entities use UUID)
+        return java.util.UUID.class;
     }
 
     public record AuditedEntityRecord(String name, String value) {}

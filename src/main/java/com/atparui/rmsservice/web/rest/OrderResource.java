@@ -252,4 +252,109 @@ public class OrderResource {
             )
             .map(headers -> ResponseEntity.ok().headers(headers).body(orderService.search(query, pageable)));
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/orders/branch/{branchId}/status/{status}} : Get orders by status
+     *
+     * @param branchId the branch ID
+     * @param status the order status
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of orders
+     */
+    @GetMapping("/branch/{branchId}/status/{status}")
+    public Mono<ResponseEntity<List<OrderDTO>>> getOrdersByStatus(@PathVariable UUID branchId, @PathVariable String status) {
+        LOG.debug("REST request to get orders by status : {} - {}", branchId, status);
+        return orderService.findByBranchIdAndStatus(branchId, status).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code GET /api/orders/branch/{branchId}/date-range} : Get orders by date range
+     *
+     * @param branchId the branch ID
+     * @param startDate the start date
+     * @param endDate the end date
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of orders
+     */
+    @GetMapping("/branch/{branchId}/date-range")
+    public Mono<ResponseEntity<List<OrderDTO>>> getOrdersByDateRange(
+        @PathVariable UUID branchId,
+        @RequestParam @org.springframework.format.annotation.DateTimeFormat(
+            iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
+        ) java.time.Instant startDate,
+        @RequestParam @org.springframework.format.annotation.DateTimeFormat(
+            iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
+        ) java.time.Instant endDate
+    ) {
+        LOG.debug("REST request to get orders by date range : {} - {} to {}", branchId, startDate, endDate);
+        return orderService
+            .findByBranchIdAndDateRange(branchId, startDate, endDate)
+            .collectList()
+            .map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code GET /api/orders/{id}/with-items} : Get order with items
+     *
+     * @param id the id of the order
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and order with items DTO
+     */
+    @GetMapping("/{id}/with-items")
+    public Mono<ResponseEntity<com.atparui.rmsservice.service.dto.OrderWithItemsDTO>> getOrderWithItems(@PathVariable UUID id) {
+        LOG.debug("REST request to get order with items : {}", id);
+        return orderService
+            .findOrderWithItems(id)
+            .map(result -> ResponseEntity.ok().body(result))
+            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/orders/create} : Create a new order
+     *
+     * @param orderRequest the order creation request
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and order DTO
+     */
+    @PostMapping("/create")
+    public Mono<ResponseEntity<OrderDTO>> createOrder(
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.OrderCreationRequestDTO orderRequest
+    ) {
+        LOG.debug("REST request to create order : {}", orderRequest);
+        return orderService.createOrder(orderRequest).map(result -> ResponseEntity.status(HttpStatus.CREATED).body(result));
+    }
+
+    // jhipster-needle-rest-add-put-method - JHipster will add put methods here
+
+    /**
+     * {@code PUT /api/orders/{id}/status} : Update order status
+     *
+     * @param id the id of the order
+     * @param request the status update request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and updated order DTO
+     */
+    @PutMapping("/{id}/status")
+    public Mono<ResponseEntity<OrderDTO>> updateOrderStatus(
+        @PathVariable UUID id,
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.OrderStatusUpdateRequestDTO request
+    ) {
+        LOG.debug("REST request to update order status : {} - {}", id, request);
+        return orderService.updateStatus(id, request).map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code PUT /api/orders/{id}/cancel} : Cancel an order
+     *
+     * @param id the id of the order
+     * @param request the cancellation request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and cancelled order DTO
+     */
+    @PutMapping("/{id}/cancel")
+    public Mono<ResponseEntity<OrderDTO>> cancelOrder(
+        @PathVariable UUID id,
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.OrderCancellationRequestDTO request
+    ) {
+        LOG.debug("REST request to cancel order : {} - {}", id, request);
+        return orderService.cancelOrder(id, request).map(result -> ResponseEntity.ok().body(result));
+    }
 }

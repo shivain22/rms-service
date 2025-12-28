@@ -33,6 +33,9 @@ public interface TableAssignmentRepository extends ReactiveCrudRepository<TableA
     @Query("SELECT * FROM table_assignment entity WHERE entity.supervisor_id IS NULL")
     Flux<TableAssignment> findAllWhereSupervisorIsNull();
 
+    @Query("SELECT * FROM table_assignment entity WHERE entity.assignment_date = :date")
+    Flux<TableAssignment> findByAssignmentDate(java.time.LocalDate date);
+
     @Override
     <S extends TableAssignment> Mono<S> save(S entity);
 

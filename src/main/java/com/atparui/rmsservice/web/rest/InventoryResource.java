@@ -211,4 +211,54 @@ public class InventoryResource {
                 )
             );
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/inventories/branch/{branchId}/low-stock} : Get low stock items
+     *
+     * @param branchId the branch ID
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of low stock items
+     */
+    @GetMapping("/branch/{branchId}/low-stock")
+    public Mono<ResponseEntity<List<InventoryDTO>>> getLowStockItems(@PathVariable UUID branchId) {
+        LOG.debug("REST request to get low stock items for branch : {}", branchId);
+        return inventoryService.findLowStockByBranchId(branchId).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/inventories/{id}/adjust} : Adjust inventory stock
+     *
+     * @param id the id of the inventory
+     * @param request the stock adjustment request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and updated inventory DTO
+     */
+    @PostMapping("/{id}/adjust")
+    public Mono<ResponseEntity<InventoryDTO>> adjustStock(
+        @PathVariable UUID id,
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.StockAdjustmentRequestDTO request
+    ) {
+        LOG.debug("REST request to adjust inventory stock : {} - {}", id, request);
+        return inventoryService.adjustStock(id, request).map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-put-method - JHipster will add put methods here
+
+    /**
+     * {@code PUT /api/inventories/{id}/stock} : Update inventory stock level
+     *
+     * @param id the id of the inventory
+     * @param request the stock update request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and updated inventory DTO
+     */
+    @PutMapping("/{id}/stock")
+    public Mono<ResponseEntity<InventoryDTO>> updateStock(
+        @PathVariable UUID id,
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.StockUpdateRequestDTO request
+    ) {
+        LOG.debug("REST request to update inventory stock : {} - {}", id, request);
+        return inventoryService.updateStock(id, request).map(result -> ResponseEntity.ok().body(result));
+    }
 }

@@ -10,6 +10,6 @@ public class JaversAuthorProvider implements AuthorProvider {
 
     @Override
     public String provide() {
-        return SecurityUtils.getCurrentUserLogin().orElse(Constants.SYSTEM);
+        return SecurityUtils.getCurrentUserLogin().blockOptional().orElse(Constants.SYSTEM);
     }
 }

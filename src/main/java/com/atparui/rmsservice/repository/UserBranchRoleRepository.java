@@ -29,6 +29,9 @@ public interface UserBranchRoleRepository extends ReactiveCrudRepository<UserBra
     @Query("SELECT * FROM user_branch_role entity WHERE entity.branch_id IS NULL")
     Flux<UserBranchRole> findAllWhereBranchIsNull();
 
+    @Query("SELECT * FROM user_branch_role entity WHERE entity.branch_id = :branchId AND entity.role = :role AND entity.is_active = true")
+    Flux<UserBranchRole> findByBranchIdAndRole(UUID branchId, String role);
+
     @Override
     <S extends UserBranchRole> Mono<S> save(S entity);
 

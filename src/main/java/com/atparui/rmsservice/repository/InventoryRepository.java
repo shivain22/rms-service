@@ -27,6 +27,9 @@ public interface InventoryRepository extends ReactiveCrudRepository<Inventory, U
     @Query("SELECT * FROM inventory entity WHERE entity.menu_item_id IS NULL")
     Flux<Inventory> findAllWhereMenuItemIsNull();
 
+    @Query("SELECT * FROM inventory entity WHERE entity.branch_id = :branchId AND entity.current_stock < entity.minimum_stock")
+    Flux<Inventory> findLowStockByBranchId(UUID branchId);
+
     @Override
     <S extends Inventory> Mono<S> save(S entity);
 

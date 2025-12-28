@@ -211,4 +211,34 @@ public class DiscountResource {
                 )
             );
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/discounts/restaurant/{restaurantId}/active} : Get active discounts
+     *
+     * @param restaurantId the restaurant ID
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of discounts
+     */
+    @GetMapping("/restaurant/{restaurantId}/active")
+    public Mono<ResponseEntity<List<DiscountDTO>>> getActiveDiscounts(@PathVariable UUID restaurantId) {
+        LOG.debug("REST request to get active discounts : {}", restaurantId);
+        return discountService.findActiveByRestaurantId(restaurantId).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/discounts/validate} : Validate discount code
+     *
+     * @param request the discount validation request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and discount validation result
+     */
+    @PostMapping("/validate")
+    public Mono<ResponseEntity<com.atparui.rmsservice.service.dto.DiscountValidationDTO>> validateDiscount(
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.DiscountValidationRequestDTO request
+    ) {
+        LOG.debug("REST request to validate discount : {}", request);
+        return discountService.validateDiscount(request).map(result -> ResponseEntity.ok().body(result));
+    }
 }

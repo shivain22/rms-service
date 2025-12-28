@@ -41,6 +41,14 @@ public interface OrderRepository extends ReactiveCrudRepository<Order, UUID>, Or
     @Query("SELECT * FROM jhi_order entity WHERE entity.branch_table_id IS NULL")
     Flux<Order> findAllWhereBranchTableIsNull();
 
+    @Query("SELECT * FROM jhi_order entity WHERE entity.branch_id = :branchId AND entity.status = :status")
+    Flux<Order> findByBranchIdAndStatus(UUID branchId, String status);
+
+    @Query(
+        "SELECT * FROM jhi_order entity WHERE entity.branch_id = :branchId AND entity.order_date >= :startDate AND entity.order_date <= :endDate"
+    )
+    Flux<Order> findByBranchIdAndOrderDateBetween(UUID branchId, java.time.Instant startDate, java.time.Instant endDate);
+
     @Override
     <S extends Order> Mono<S> save(S entity);
 

@@ -154,4 +154,94 @@ public class MenuItemService {
         LOG.debug("Request to search for a page of MenuItems for query {}", query);
         return menuItemSearchRepository.search(query, pageable).map(menuItemMapper::toDto);
     }
+
+    // jhipster-needle-service-impl-add-method - JHipster will add methods here
+
+    /**
+     * Find available menu items by branch ID
+     *
+     * @param branchId the branch ID
+     * @return the list of available menu item DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<MenuItemDTO> findAvailableByBranchId(UUID branchId) {
+        LOG.debug("Request to find available MenuItems by branch ID : {}", branchId);
+        return menuItemRepository.findAvailableByBranchId(branchId).map(menuItemMapper::toDto);
+    }
+
+    /**
+     * Find menu items by category ID
+     *
+     * @param categoryId the menu category ID
+     * @return the list of menu item DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<MenuItemDTO> findByCategoryId(UUID categoryId) {
+        LOG.debug("Request to find MenuItems by category ID : {}", categoryId);
+        return menuItemRepository.findByCategoryId(categoryId).map(menuItemMapper::toDto);
+    }
+
+    /**
+     * Find filtered menu items
+     *
+     * @param branchId the branch ID
+     * @param itemType the item type (EATABLE, BEVERAGE)
+     * @param cuisineType the cuisine type
+     * @param isVegetarian vegetarian filter
+     * @param isAlcoholic alcoholic filter
+     * @return the list of filtered menu item DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<MenuItemDTO> findFiltered(UUID branchId, String itemType, String cuisineType, Boolean isVegetarian, Boolean isAlcoholic) {
+        LOG.debug(
+            "Request to find filtered MenuItems : {} - {} - {} - {} - {}",
+            branchId,
+            itemType,
+            cuisineType,
+            isVegetarian,
+            isAlcoholic
+        );
+        return menuItemRepository
+            .findByBranch(branchId)
+            .filter(menuItem -> {
+                if (itemType != null && !itemType.equals(menuItem.getItemType())) {
+                    return false;
+                }
+                if (cuisineType != null && !cuisineType.equals(menuItem.getCuisineType())) {
+                    return false;
+                }
+                if (isVegetarian != null && !isVegetarian.equals(menuItem.getIsVegetarian())) {
+                    return false;
+                }
+                if (isAlcoholic != null && !isAlcoholic.equals(menuItem.getIsAlcoholic())) {
+                    return false;
+                }
+                return true;
+            })
+            .map(menuItemMapper::toDto);
+    }
+
+    /**
+     * Update menu item availability
+     *
+     * @param id the id of the menu item
+     * @param isAvailable the availability status
+     * @return the updated menu item DTO
+     */
+    public Mono<MenuItemDTO> updateAvailability(UUID id, Boolean isAvailable) {
+        LOG.debug("Request to update MenuItem availability : {} - {}", id, isAvailable);
+        return menuItemRepository
+            .findById(id)
+            .switchIfEmpty(Mono.error(new RuntimeException("MenuItem not found")))
+            .map(menuItem -> {
+                menuItem.setIsAvailable(isAvailable);
+                return menuItem;
+            })
+            .flatMap(menuItemRepository::save)
+            .flatMap(savedMenuItem -> {
+                menuItemSearchRepository.save(savedMenuItem);
+                return Mono.just(savedMenuItem);
+            })
+            .map(menuItemMapper::toDto);
+    }
 }

@@ -29,6 +29,9 @@ public interface PaymentRepository extends ReactiveCrudRepository<Payment, UUID>
     @Query("SELECT * FROM payment entity WHERE entity.payment_method_id IS NULL")
     Flux<Payment> findAllWherePaymentMethodIsNull();
 
+    @Query("SELECT * FROM payment entity WHERE entity.bill_id = :billId")
+    Flux<Payment> findByBillId(UUID billId);
+
     @Override
     <S extends Payment> Mono<S> save(S entity);
 

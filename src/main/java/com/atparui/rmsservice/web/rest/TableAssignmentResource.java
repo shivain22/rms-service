@@ -3,6 +3,7 @@ package com.atparui.rmsservice.web.rest;
 import com.atparui.rmsservice.repository.TableAssignmentRepository;
 import com.atparui.rmsservice.service.TableAssignmentService;
 import com.atparui.rmsservice.service.dto.TableAssignmentDTO;
+import com.atparui.rmsservice.service.dto.TableWaiterAssignmentDTO;
 import com.atparui.rmsservice.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -211,5 +212,61 @@ public class TableAssignmentResource {
                         .build()
                 )
             );
+    }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/table-assignments/date/{date}} : Get assignments for date
+     *
+     * @param date the assignment date
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of assignments
+     */
+    @GetMapping("/date/{date}")
+    public Mono<ResponseEntity<List<TableAssignmentDTO>>> getAssignmentsForDate(
+        @PathVariable @org.springframework.format.annotation.DateTimeFormat(
+            iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE
+        ) java.time.LocalDate date
+    ) {
+        LOG.debug("REST request to get assignments for date : {}", date);
+        return tableAssignmentService.findByAssignmentDate(date).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/table-assignments/daily} : Create daily table assignments
+     *
+     * @param assignmentRequest the assignment request
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and list of assignments
+     */
+    @PostMapping("/daily")
+    public Mono<ResponseEntity<List<TableAssignmentDTO>>> createDailyAssignments(
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.DailyTableAssignmentRequestDTO assignmentRequest
+    ) {
+        LOG.debug("REST request to create daily table assignments : {}", assignmentRequest);
+        return tableAssignmentService
+            .createDailyAssignments(assignmentRequest)
+            .collectList()
+            .map(result -> ResponseEntity.status(HttpStatus.CREATED).body(result));
+    }
+
+    /**
+     * {@code POST /api/table-assignments/{assignmentId}/waiters} : Assign waiters to table
+     *
+     * @param assignmentId the table assignment ID
+     * @param waiterIds list of waiter user IDs
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and list of waiter assignments
+     */
+    @PostMapping("/{assignmentId}/waiters")
+    public Mono<ResponseEntity<List<TableWaiterAssignmentDTO>>> assignWaiters(
+        @PathVariable UUID assignmentId,
+        @RequestBody List<UUID> waiterIds
+    ) {
+        LOG.debug("REST request to assign waiters : {} - {}", assignmentId, waiterIds);
+        return tableAssignmentService
+            .assignWaiters(assignmentId, waiterIds)
+            .collectList()
+            .map(result -> ResponseEntity.status(HttpStatus.CREATED).body(result));
     }
 }

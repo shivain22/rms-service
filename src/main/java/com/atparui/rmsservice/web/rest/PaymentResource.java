@@ -252,4 +252,86 @@ public class PaymentResource {
             )
             .map(headers -> ResponseEntity.ok().headers(headers).body(paymentService.search(query, pageable)));
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/payments/bill/{billId}} : Get payments by bill
+     *
+     * @param billId the bill ID
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of payments
+     */
+    @GetMapping("/bill/{billId}")
+    public Mono<ResponseEntity<List<PaymentDTO>>> getPaymentsByBill(@PathVariable UUID billId) {
+        LOG.debug("REST request to get payments by bill : {}", billId);
+        return paymentService.findByBillId(billId).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code GET /api/payments/branch/{branchId}/summary} : Get payment summary
+     *
+     * @param branchId the branch ID
+     * @param startDate the start date
+     * @param endDate the end date
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and payment summary
+     */
+    @GetMapping("/branch/{branchId}/summary")
+    public Mono<ResponseEntity<com.atparui.rmsservice.service.dto.PaymentSummaryDTO>> getPaymentSummary(
+        @PathVariable UUID branchId,
+        @RequestParam @org.springframework.format.annotation.DateTimeFormat(
+            iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
+        ) java.time.Instant startDate,
+        @RequestParam @org.springframework.format.annotation.DateTimeFormat(
+            iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
+        ) java.time.Instant endDate
+    ) {
+        LOG.debug("REST request to get payment summary : {} - {} to {}", branchId, startDate, endDate);
+        return paymentService.getPaymentSummary(branchId, startDate, endDate).map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-post-method - JHipster will add post methods here
+
+    /**
+     * {@code POST /api/payments/process} : Process payment for a bill
+     *
+     * @param request the payment request
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and payment DTO
+     */
+    @PostMapping("/process")
+    public Mono<ResponseEntity<PaymentDTO>> processPayment(
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.PaymentRequestDTO request
+    ) {
+        LOG.debug("REST request to process payment : {}", request);
+        return paymentService.processPayment(request).map(result -> ResponseEntity.status(HttpStatus.CREATED).body(result));
+    }
+
+    /**
+     * {@code POST /api/payments/process-partial} : Process partial payment
+     *
+     * @param request the partial payment request
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and payment DTO
+     */
+    @PostMapping("/process-partial")
+    public Mono<ResponseEntity<PaymentDTO>> processPartialPayment(
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.PartialPaymentRequestDTO request
+    ) {
+        LOG.debug("REST request to process partial payment : {}", request);
+        return paymentService.processPartialPayment(request).map(result -> ResponseEntity.status(HttpStatus.CREATED).body(result));
+    }
+
+    /**
+     * {@code POST /api/payments/{id}/refund} : Process refund
+     *
+     * @param id the id of the payment
+     * @param request the refund request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and refunded payment DTO
+     */
+    @PostMapping("/{id}/refund")
+    public Mono<ResponseEntity<PaymentDTO>> processRefund(
+        @PathVariable UUID id,
+        @Valid @RequestBody com.atparui.rmsservice.service.dto.RefundRequestDTO request
+    ) {
+        LOG.debug("REST request to process refund : {} - {}", id, request);
+        return paymentService.processRefund(id, request).map(result -> ResponseEntity.ok().body(result));
+    }
 }

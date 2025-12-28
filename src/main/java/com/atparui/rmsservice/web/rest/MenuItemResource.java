@@ -252,4 +252,74 @@ public class MenuItemResource {
             )
             .map(headers -> ResponseEntity.ok().headers(headers).body(menuItemService.search(query, pageable)));
     }
+
+    // jhipster-needle-rest-add-get-method - JHipster will add get methods here
+
+    /**
+     * {@code GET /api/menu-items/branch/{branchId}/available} : Get available menu items
+     *
+     * @param branchId the branch ID
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of menu items
+     */
+    @GetMapping("/branch/{branchId}/available")
+    public Mono<ResponseEntity<List<MenuItemDTO>>> getAvailableMenuItems(@PathVariable UUID branchId) {
+        LOG.debug("REST request to get available menu items for branch : {}", branchId);
+        return menuItemService.findAvailableByBranchId(branchId).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code GET /api/menu-items/category/{categoryId}} : Get menu items by category
+     *
+     * @param categoryId the menu category ID
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of menu items
+     */
+    @GetMapping("/category/{categoryId}")
+    public Mono<ResponseEntity<List<MenuItemDTO>>> getMenuItemsByCategory(@PathVariable UUID categoryId) {
+        LOG.debug("REST request to get menu items by category : {}", categoryId);
+        return menuItemService.findByCategoryId(categoryId).collectList().map(result -> ResponseEntity.ok().body(result));
+    }
+
+    /**
+     * {@code GET /api/menu-items/branch/{branchId}/filtered} : Get filtered menu items
+     *
+     * @param branchId the branch ID
+     * @param itemType the item type (EATABLE, BEVERAGE)
+     * @param cuisineType the cuisine type
+     * @param isVegetarian vegetarian filter
+     * @param isAlcoholic alcoholic filter
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and list of menu items
+     */
+    @GetMapping("/branch/{branchId}/filtered")
+    public Mono<ResponseEntity<List<MenuItemDTO>>> getFilteredMenuItems(
+        @PathVariable UUID branchId,
+        @RequestParam(required = false) String itemType,
+        @RequestParam(required = false) String cuisineType,
+        @RequestParam(required = false) Boolean isVegetarian,
+        @RequestParam(required = false) Boolean isAlcoholic
+    ) {
+        LOG.debug("REST request to get filtered menu items for branch : {}", branchId);
+        return menuItemService
+            .findFiltered(branchId, itemType, cuisineType, isVegetarian, isAlcoholic)
+            .collectList()
+            .map(result -> ResponseEntity.ok().body(result));
+    }
+
+    // jhipster-needle-rest-add-put-method - JHipster will add put methods here
+
+    /**
+     * {@code PUT /api/menu-items/{id}/availability} : Update menu item availability
+     *
+     * @param id the id of the menu item
+     * @param request the availability request
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and updated menu item DTO
+     */
+    @PutMapping("/{id}/availability")
+    public Mono<ResponseEntity<MenuItemDTO>> updateAvailability(
+        @PathVariable UUID id,
+        @RequestBody java.util.Map<String, Boolean> request
+    ) {
+        Boolean isAvailable = request.get("isAvailable");
+        LOG.debug("REST request to update menu item availability : {} - {}", id, isAvailable);
+        return menuItemService.updateAvailability(id, isAvailable).map(result -> ResponseEntity.ok().body(result));
+    }
 }

@@ -23,6 +23,12 @@ public interface BranchTableRepository extends ReactiveCrudRepository<BranchTabl
     @Query("SELECT * FROM branch_table entity WHERE entity.branch_id IS NULL")
     Flux<BranchTable> findAllWhereBranchIsNull();
 
+    @Query("SELECT * FROM branch_table entity WHERE entity.branch_id = :branchId AND entity.status = 'AVAILABLE'")
+    Flux<BranchTable> findAvailableByBranchId(UUID branchId);
+
+    @Query("SELECT * FROM branch_table entity WHERE entity.branch_id = :branchId AND entity.status = :status")
+    Flux<BranchTable> findByBranchIdAndStatus(UUID branchId, String status);
+
     @Override
     <S extends BranchTable> Mono<S> save(S entity);
 

@@ -2,8 +2,16 @@ package com.atparui.rmsservice.service;
 
 import com.atparui.rmsservice.repository.PaymentRepository;
 import com.atparui.rmsservice.repository.search.PaymentSearchRepository;
+import com.atparui.rmsservice.service.dto.PartialPaymentRequestDTO;
 import com.atparui.rmsservice.service.dto.PaymentDTO;
+import com.atparui.rmsservice.service.dto.PaymentRequestDTO;
+import com.atparui.rmsservice.service.dto.PaymentSummaryDTO;
+import com.atparui.rmsservice.service.dto.RefundRequestDTO;
 import com.atparui.rmsservice.service.mapper.PaymentMapper;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,5 +158,190 @@ public class PaymentService {
     public Flux<PaymentDTO> search(String query, Pageable pageable) {
         LOG.debug("Request to search for a page of Payments for query {}", query);
         return paymentSearchRepository.search(query, pageable).map(paymentMapper::toDto);
+    }
+
+    // jhipster-needle-service-impl-add-method - JHipster will add methods here
+
+    /**
+     * Find payments by bill ID
+     *
+     * @param billId the bill ID
+     * @return the list of payment DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<PaymentDTO> findByBillId(UUID billId) {
+        LOG.debug("Request to find Payments by bill ID : {}", billId);
+        return paymentRepository.findByBillId(billId).map(paymentMapper::toDto);
+    }
+
+    /**
+     * Process a payment for a bill
+     *
+     * @param request the payment request
+     * @return the created payment DTO
+     */
+    public Mono<PaymentDTO> processPayment(PaymentRequestDTO request) {
+        LOG.debug("Request to process payment : {}", request);
+        PaymentDTO paymentDTO = new PaymentDTO();
+        paymentDTO.setId(UUID.randomUUID());
+
+        // Set nested BillDTO with ID
+        if (request.getBillId() != null) {
+            com.atparui.rmsservice.service.dto.BillDTO billDTO = new com.atparui.rmsservice.service.dto.BillDTO();
+            billDTO.setId(request.getBillId());
+            paymentDTO.setBill(billDTO);
+        }
+
+        // Set nested PaymentMethodDTO with ID
+        if (request.getPaymentMethodId() != null) {
+            com.atparui.rmsservice.service.dto.PaymentMethodDTO paymentMethodDTO =
+                new com.atparui.rmsservice.service.dto.PaymentMethodDTO();
+            paymentMethodDTO.setId(request.getPaymentMethodId());
+            paymentDTO.setPaymentMethod(paymentMethodDTO);
+        }
+
+        paymentDTO.setAmount(request.getAmount());
+        paymentDTO.setTransactionId(request.getTransactionId());
+        paymentDTO.setPaymentDate(Instant.now());
+        paymentDTO.setStatus("COMPLETED");
+        paymentDTO.setPaymentNumber("PAY-" + System.currentTimeMillis());
+        paymentDTO.setNotes(request.getNotes());
+        return save(paymentDTO);
+    }
+
+    /**
+     * Process a partial payment for a bill
+     *
+     * @param request the partial payment request
+     * @return the created payment DTO
+     */
+    public Mono<PaymentDTO> processPartialPayment(PartialPaymentRequestDTO request) {
+        LOG.debug("Request to process partial payment : {}", request);
+        PaymentDTO paymentDTO = new PaymentDTO();
+        paymentDTO.setId(UUID.randomUUID());
+
+        // Set nested BillDTO with ID
+        if (request.getBillId() != null) {
+            com.atparui.rmsservice.service.dto.BillDTO billDTO = new com.atparui.rmsservice.service.dto.BillDTO();
+            billDTO.setId(request.getBillId());
+            paymentDTO.setBill(billDTO);
+        }
+
+        // Set nested PaymentMethodDTO with ID
+        if (request.getPaymentMethodId() != null) {
+            com.atparui.rmsservice.service.dto.PaymentMethodDTO paymentMethodDTO =
+                new com.atparui.rmsservice.service.dto.PaymentMethodDTO();
+            paymentMethodDTO.setId(request.getPaymentMethodId());
+            paymentDTO.setPaymentMethod(paymentMethodDTO);
+        }
+
+        paymentDTO.setAmount(request.getAmount());
+        paymentDTO.setTransactionId(request.getTransactionId());
+        paymentDTO.setPaymentDate(Instant.now());
+        paymentDTO.setStatus("PARTIAL");
+        paymentDTO.setPaymentNumber("PAY-" + System.currentTimeMillis());
+        paymentDTO.setNotes(request.getNotes());
+        return save(paymentDTO);
+    }
+
+    /**
+     * Process a refund for a payment
+     *
+     * @param paymentId the id of the payment
+     * @param request the refund request
+     * @return the refunded payment DTO
+     */
+    public Mono<PaymentDTO> processRefund(UUID paymentId, RefundRequestDTO request) {
+        LOG.debug("Request to process refund : {} - {}", paymentId, request);
+        return paymentRepository
+            .findById(paymentId)
+            .switchIfEmpty(Mono.error(new RuntimeException("Payment not found")))
+            .map(paymentMapper::toDto)
+            .flatMap(originalPaymentDTO -> {
+                PaymentDTO refundDTO = new PaymentDTO();
+                refundDTO.setId(UUID.randomUUID());
+
+                // Copy bill from original payment
+                refundDTO.setBill(originalPaymentDTO.getBill());
+
+                // Copy payment method from original payment
+                refundDTO.setPaymentMethod(originalPaymentDTO.getPaymentMethod());
+
+                refundDTO.setAmount(request.getRefundAmount().negate());
+                refundDTO.setTransactionId(
+                    "REFUND-" +
+                    (originalPaymentDTO.getTransactionId() != null ? originalPaymentDTO.getTransactionId() : paymentId.toString())
+                );
+                refundDTO.setPaymentDate(Instant.now());
+                refundDTO.setStatus("REFUNDED");
+                refundDTO.setRefundReason(request.getRefundReason());
+                refundDTO.setRefundedAt(Instant.now());
+                refundDTO.setPaymentNumber("REFUND-" + System.currentTimeMillis());
+                refundDTO.setNotes(request.getRefundReason());
+                return save(refundDTO);
+            });
+    }
+
+    /**
+     * Get payment summary for a branch
+     *
+     * @param branchId the branch ID
+     * @param startDate the start date
+     * @param endDate the end date
+     * @return the payment summary DTO
+     */
+    @Transactional(readOnly = true)
+    public Mono<PaymentSummaryDTO> getPaymentSummary(UUID branchId, Instant startDate, Instant endDate) {
+        LOG.debug("Request to get payment summary : {} - {} to {}", branchId, startDate, endDate);
+        // TODO: Implement full payment summary logic with aggregation and branch filtering
+        return paymentRepository
+            .findAll()
+            .filter(
+                payment ->
+                    payment.getPaymentDate() != null &&
+                    payment.getPaymentDate().isAfter(startDate) &&
+                    payment.getPaymentDate().isBefore(endDate)
+            )
+            .map(paymentMapper::toDto)
+            .collectList()
+            .map(payments -> {
+                PaymentSummaryDTO summary = new PaymentSummaryDTO();
+                summary.setBranchId(branchId);
+
+                BigDecimal totalAmount = payments
+                    .stream()
+                    .map(PaymentDTO::getAmount)
+                    .filter(amount -> amount != null && amount.compareTo(BigDecimal.ZERO) > 0)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                summary.setTotalAmount(totalAmount);
+                summary.setTotalTransactions(payments.size());
+
+                // Group by payment method
+                Map<UUID, PaymentSummaryDTO.PaymentMethodSummaryDTO> methodMap = new HashMap<>();
+                payments.forEach(payment -> {
+                    if (
+                        payment.getAmount() != null &&
+                        payment.getAmount().compareTo(BigDecimal.ZERO) > 0 &&
+                        payment.getPaymentMethod() != null
+                    ) {
+                        UUID methodId = payment.getPaymentMethod().getId();
+                        PaymentSummaryDTO.PaymentMethodSummaryDTO methodSummary = methodMap.computeIfAbsent(methodId, id -> {
+                            PaymentSummaryDTO.PaymentMethodSummaryDTO summaryDTO = new PaymentSummaryDTO.PaymentMethodSummaryDTO();
+                            summaryDTO.setPaymentMethodId(id);
+                            summaryDTO.setPaymentMethodName(
+                                payment.getPaymentMethod().getMethodName() != null ? payment.getPaymentMethod().getMethodName() : "UNKNOWN"
+                            );
+                            summaryDTO.setTotalAmount(BigDecimal.ZERO);
+                            summaryDTO.setTransactionCount(0);
+                            return summaryDTO;
+                        });
+                        methodSummary.setTotalAmount(methodSummary.getTotalAmount().add(payment.getAmount()));
+                        methodSummary.setTransactionCount(methodSummary.getTransactionCount() + 1);
+                    }
+                });
+
+                summary.setMethodSummaries(new java.util.ArrayList<>(methodMap.values()));
+                return summary;
+            });
     }
 }

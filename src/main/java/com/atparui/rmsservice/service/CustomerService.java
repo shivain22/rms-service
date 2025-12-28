@@ -1,9 +1,14 @@
 package com.atparui.rmsservice.service;
 
 import com.atparui.rmsservice.repository.CustomerRepository;
+import com.atparui.rmsservice.repository.OrderRepository;
 import com.atparui.rmsservice.repository.search.CustomerSearchRepository;
 import com.atparui.rmsservice.service.dto.CustomerDTO;
+import com.atparui.rmsservice.service.dto.CustomerLoyaltyDTO;
+import com.atparui.rmsservice.service.dto.LoyaltyPointsRequestDTO;
+import com.atparui.rmsservice.service.dto.OrderDTO;
 import com.atparui.rmsservice.service.mapper.CustomerMapper;
+import com.atparui.rmsservice.service.mapper.OrderMapper;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +33,26 @@ public class CustomerService {
 
     private final CustomerSearchRepository customerSearchRepository;
 
+    private final OrderRepository orderRepository;
+
+    private final OrderMapper orderMapper;
+
+    private final CustomerLoyaltyService customerLoyaltyService;
+
     public CustomerService(
         CustomerRepository customerRepository,
         CustomerMapper customerMapper,
-        CustomerSearchRepository customerSearchRepository
+        CustomerSearchRepository customerSearchRepository,
+        OrderRepository orderRepository,
+        OrderMapper orderMapper,
+        CustomerLoyaltyService customerLoyaltyService
     ) {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
         this.customerSearchRepository = customerSearchRepository;
+        this.orderRepository = orderRepository;
+        this.orderMapper = orderMapper;
+        this.customerLoyaltyService = customerLoyaltyService;
     }
 
     /**
@@ -153,5 +170,57 @@ public class CustomerService {
     public Flux<CustomerDTO> search(String query, Pageable pageable) {
         LOG.debug("Request to search for a page of Customers for query {}", query);
         return customerSearchRepository.search(query, pageable).map(customerMapper::toDto);
+    }
+
+    // jhipster-needle-service-impl-add-method - JHipster will add methods here
+
+    /**
+     * Get customer orders
+     *
+     * @param customerId the customer ID
+     * @return the list of order DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<OrderDTO> getCustomerOrders(UUID customerId) {
+        LOG.debug("Request to get customer orders : {}", customerId);
+        return orderRepository.findByCustomer(customerId).map(orderMapper::toDto);
+    }
+
+    /**
+     * Get customer loyalty information
+     *
+     * @param customerId the customer ID
+     * @return the customer loyalty DTO
+     */
+    @Transactional(readOnly = true)
+    public Mono<CustomerLoyaltyDTO> getCustomerLoyalty(UUID customerId) {
+        LOG.debug("Request to get customer loyalty : {}", customerId);
+        return customerLoyaltyService
+            .findByCustomer(customerId)
+            .next()
+            .switchIfEmpty(Mono.error(new RuntimeException("Customer loyalty not found")));
+    }
+
+    /**
+     * Add loyalty points to a customer
+     *
+     * @param customerId the customer ID
+     * @param request the points addition request
+     * @return the updated customer loyalty DTO
+     */
+    public Mono<CustomerLoyaltyDTO> addLoyaltyPoints(UUID customerId, LoyaltyPointsRequestDTO request) {
+        LOG.debug("Request to add loyalty points : {} - {}", customerId, request);
+        return customerLoyaltyService
+            .findByCustomer(customerId)
+            .next()
+            .switchIfEmpty(Mono.error(new RuntimeException("Customer loyalty not found")))
+            .flatMap(loyalty -> {
+                java.math.BigDecimal currentPoints = loyalty.getLoyaltyPoints() != null
+                    ? loyalty.getLoyaltyPoints()
+                    : java.math.BigDecimal.ZERO;
+                loyalty.setLoyaltyPoints(currentPoints.add(request.getPoints()));
+                loyalty.setLastPointsEarnedAt(java.time.Instant.now());
+                return customerLoyaltyService.update(loyalty);
+            });
     }
 }

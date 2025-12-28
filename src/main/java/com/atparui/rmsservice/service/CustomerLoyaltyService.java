@@ -115,4 +115,16 @@ public class CustomerLoyaltyService {
         LOG.debug("Request to delete CustomerLoyalty : {}", id);
         return customerLoyaltyRepository.deleteById(id);
     }
+
+    /**
+     * Find customer loyalty by customer ID
+     *
+     * @param customerId the customer ID
+     * @return the list of customer loyalty DTOs
+     */
+    @Transactional(readOnly = true)
+    public Flux<CustomerLoyaltyDTO> findByCustomer(UUID customerId) {
+        LOG.debug("Request to find CustomerLoyalty by customer ID : {}", customerId);
+        return customerLoyaltyRepository.findByCustomer(customerId).map(customerLoyaltyMapper::toDto);
+    }
 }

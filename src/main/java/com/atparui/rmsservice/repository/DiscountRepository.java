@@ -21,6 +21,14 @@ public interface DiscountRepository extends ReactiveCrudRepository<Discount, UUI
     @Query("SELECT * FROM discount entity WHERE entity.restaurant_id IS NULL")
     Flux<Discount> findAllWhereRestaurantIsNull();
 
+    @Query(
+        "SELECT * FROM discount entity WHERE entity.restaurant_id = :restaurantId AND entity.is_active = true AND (entity.valid_from <= CURRENT_DATE AND (entity.valid_to IS NULL OR entity.valid_to >= CURRENT_DATE))"
+    )
+    Flux<Discount> findActiveByRestaurantId(UUID restaurantId);
+
+    @Query("SELECT * FROM discount entity WHERE entity.discount_code = :discountCode AND entity.restaurant_id = :restaurantId")
+    Mono<Discount> findByDiscountCodeAndRestaurantId(String discountCode, UUID restaurantId);
+
     @Override
     <S extends Discount> Mono<S> save(S entity);
 
