@@ -31,6 +31,12 @@ public class TenantDatabaseConfig implements Serializable {
     @JsonProperty("validationQuery")
     private String validationQuery = "SELECT 1";
 
+    @JsonProperty("rmsServiceClientId")
+    private String rmsServiceClientId;
+
+    @JsonProperty("rmsServiceClientSecret")
+    private String rmsServiceClientSecret;
+
     public TenantDatabaseConfig() {}
 
     public String getTenantId() {
@@ -87,6 +93,22 @@ public class TenantDatabaseConfig implements Serializable {
 
     public void setValidationQuery(String validationQuery) {
         this.validationQuery = validationQuery;
+    }
+
+    public String getRmsServiceClientId() {
+        return rmsServiceClientId;
+    }
+
+    public void setRmsServiceClientId(String rmsServiceClientId) {
+        this.rmsServiceClientId = rmsServiceClientId;
+    }
+
+    public String getRmsServiceClientSecret() {
+        return rmsServiceClientSecret;
+    }
+
+    public void setRmsServiceClientSecret(String rmsServiceClientSecret) {
+        this.rmsServiceClientSecret = rmsServiceClientSecret;
     }
 
     @Override
