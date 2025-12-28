@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity AppNavigationMenuItem.
+    -->
+    <changeSet id="20251228101749-1" author="jhipster">
+        <createTable tableName="app_navigation_menu_item">
+            <column name="id" type="${uuidType}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="item_code" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="item_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="${clobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="icon" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="route_path" type="varchar(500)">
+                <constraints nullable="false" />
+            </column>
+            <column name="component_path" type="varchar(500)">
+                <constraints nullable="true" />
+            </column>
+            <column name="display_order" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="badge_text" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="badge_color" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="is_active" type="boolean">
+                <constraints nullable="true" />
+            </column>
+            <column name="parent_menu_id" type="${uuidType}">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+
+    <!--
+        Load sample data generated with Faker.js
+        - This data can be easily edited using a CSV editor (or even MS Excel) and
+          is located in the 'src/main/resources/config/liquibase/fake-data' directory
+        - By default this data is applied when running with the JHipster 'dev' profile.
+          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
+          Spring Boot configuration key.
+    -->
+    <changeSet id="20251228101749-1-data" author="jhipster" context="faker">
+        <loadData
+                  file="config/liquibase/fake-data/app_navigation_menu_item.csv"
+                  separator=";"
+                  tableName="app_navigation_menu_item"
+                  usePreparedStatements="true">
+            <column name="id" type="${uuidType}"/>
+            <column name="item_code" type="string"/>
+            <column name="item_name" type="string"/>
+            <column name="description" type="clob"/>
+            <column name="icon" type="string"/>
+            <column name="route_path" type="string"/>
+            <column name="component_path" type="string"/>
+            <column name="display_order" type="numeric"/>
+            <column name="badge_text" type="string"/>
+            <column name="badge_color" type="string"/>
+            <column name="is_active" type="boolean"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

@@ -376,6 +376,42 @@ entity Payment {
 }
 
 // ============================================================================
+// Application Navigation Menu Management (CMS)
+// ============================================================================
+
+entity AppNavigationMenu {
+    id UUID
+    menuCode String required unique maxlength(50)
+    menuName String required maxlength(255)
+    description TextBlob
+    menuType String required maxlength(50)
+    icon String maxlength(100)
+    routePath String maxlength(500)
+    displayOrder Integer
+    isActive Boolean
+}
+
+entity AppNavigationMenuItem {
+    id UUID
+    itemCode String required maxlength(50)
+    itemName String required maxlength(255)
+    description TextBlob
+    icon String maxlength(100)
+    routePath String required maxlength(500)
+    componentPath String maxlength(500)
+    displayOrder Integer
+    badgeText String maxlength(50)
+    badgeColor String maxlength(50)
+    isActive Boolean
+}
+
+entity AppNavigationMenuRole {
+    id UUID
+    role String required maxlength(50)
+    isActive Boolean
+}
+
+// ============================================================================
 // Relationships
 // ============================================================================
 
@@ -424,6 +460,9 @@ relationship ManyToOne {
     BillDiscount{discount} to Discount
     Payment{bill} to Bill
     Payment{paymentMethod} to PaymentMethod
+    AppNavigationMenuItem{parentMenu} to AppNavigationMenu
+    AppNavigationMenuRole{appNavigationMenu} to AppNavigationMenu
+    AppNavigationMenuRole{appNavigationMenuItem} to AppNavigationMenuItem
 }
 
 // ============================================================================
@@ -437,7 +476,7 @@ dto * with mapstruct
 service * with serviceClass
 
 // Pagination for main entities
-paginate Restaurant, Branch, RmsUser, UserBranchRole, BranchTable, Shift, MenuCategory, MenuItem, Customer, Order, Bill, Payment with pagination
+paginate Restaurant, Branch, RmsUser, UserBranchRole, BranchTable, Shift, MenuCategory, MenuItem, Customer, Order, Bill, Payment, AppNavigationMenu, AppNavigationMenuItem, AppNavigationMenuRole with pagination
 
 // Elasticsearch search for frequently searched entities
 search Restaurant, Branch, RmsUser, BranchTable, MenuCategory, MenuItem, Customer, Order, Bill, Payment with elasticsearch

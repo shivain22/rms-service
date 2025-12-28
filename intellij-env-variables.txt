@@ -1,0 +1,36 @@
+# IntelliJ IDEA Environment Variables Configuration
+# Copy and paste these into IntelliJ Run Configuration > Environment Variables
+# Format: KEY=VALUE (one per line, no spaces around =)
+
+# Spring Profiles
+SPRING_PROFILES_ACTIVE=dev,api-docs
+
+# Keycloak OAuth2 Configuration
+SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=https://rmsauth.atparui.com/realms/jhipster
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
+
+# Gateway Configuration (Multi-tenant)
+MULTI_TENANT_GATEWAY_BASE_URL=http://localhost:8082
+
+# Consul Service Discovery (if using Consul)
+SPRING_CLOUD_CONSUL_HOST=localhost
+SPRING_CLOUD_CONSUL_PORT=8500
+
+# Server Configuration
+SERVER_PORT=8083
+
+# Database Configuration (if needed - adjust based on your local setup)
+SPRING_R2DBC_URL=r2dbc:postgresql://localhost:5432/rmsservice
+SPRING_R2DBC_USERNAME=rmsservice
+SPRING_R2DBC_PASSWORD=
+SPRING_LIQUIBASE_URL=jdbc:postgresql://localhost:5432/rmsservice
+SPRING_LIQUIBASE_USER=rmsservice
+SPRING_LIQUIBASE_PASSWORD=
+
+# Elasticsearch (if needed)
+SPRING_ELASTICSEARCH_URIS=http://localhost:9200
+
+# Kafka (if needed)
+SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=localhost:9092
+

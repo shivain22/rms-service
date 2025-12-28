@@ -48,12 +48,15 @@
       "BillTax",
       "BillDiscount",
       "PaymentMethod",
-      "Payment"
+      "Payment",
+      "AppNavigationMenu",
+      "AppNavigationMenuItem",
+      "AppNavigationMenuRole"
     ],
     "feignClient": null,
     "jhipsterVersion": "8.11.0",
     "jwtSecretKey": "ZGVjNjVmYWFkMDRiYTE5MTJiNjI1ZTgyM2EwMGU0ODBmYmYyYjIzMTg0YTNhYWEzZDZiYmQ0MTk0OGY2NjJjZDc0ZWM3OWQzM2YzM2UxZDJlYWUyNzUxMzYwZGMxZTg3MDhmNDBkODY0ZTdmNDllYzE5MzkzMDJlYjM5ZDMwNmY=",
-    "lastLiquibaseTimestamp": 1766898673000,
+    "lastLiquibaseTimestamp": 1766917070000,
     "messageBroker": "kafka",
     "microfrontend": null,
     "microfrontends": [],

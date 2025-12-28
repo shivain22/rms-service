@@ -1,0 +1,51 @@
+// ============================================================================
+// Application Navigation Menu Management (CMS)
+// ============================================================================
+// This module handles role-based application navigation menu for mobile/web apps
+// This is different from restaurant menu (food items) - this is the app navigation
+// ============================================================================
+
+entity AppNavigationMenu {
+    id UUID
+    menuCode String required unique maxlength(50)
+    menuName String required maxlength(255)
+    description TextBlob
+    menuType String required maxlength(50)
+    icon String maxlength(100)
+    routePath String maxlength(500)
+    displayOrder Integer
+    isActive Boolean
+}
+
+entity AppNavigationMenuItem {
+    id UUID
+    itemCode String required maxlength(50)
+    itemName String required maxlength(255)
+    description TextBlob
+    icon String maxlength(100)
+    routePath String required maxlength(500)
+    componentPath String maxlength(500)
+    displayOrder Integer
+    badgeText String maxlength(50)
+    badgeColor String maxlength(50)
+    isActive Boolean
+}
+
+entity AppNavigationMenuRole {
+    id UUID
+    role String required maxlength(50)
+    isActive Boolean
+}
+
+// Relationships
+relationship ManyToOne {
+    AppNavigationMenuItem{parentMenu} to AppNavigationMenu
+    AppNavigationMenuRole{appNavigationMenu} to AppNavigationMenu
+    AppNavigationMenuRole{appNavigationMenuItem} to AppNavigationMenuItem
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+pagination AppNavigationMenu, AppNavigationMenuItem, AppNavigationMenuRole with pagination
+

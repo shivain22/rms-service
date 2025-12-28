@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity AppNavigationMenuRole.
+    -->
+    <changeSet id="20251228101750-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="app_navigation_menu_id"
+                                 baseTableName="app_navigation_menu_role"
+                                 constraintName="fk_app_navigation_menu_role__app_navigation_menu_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="app_navigation_menu"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="app_navigation_menu_item_id"
+                                 baseTableName="app_navigation_menu_role"
+                                 constraintName="fk_app_navigation_menu_role__app_navigation_menu_item_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="app_navigation_menu_item"
+                                 />
+    </changeSet>
+</databaseChangeLog>

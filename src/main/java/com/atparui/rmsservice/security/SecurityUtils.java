@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -102,6 +103,20 @@ public final class SecurityUtils {
      */
     public static Mono<Boolean> hasCurrentUserThisAuthority(String authority) {
         return hasCurrentUserAnyOfAuthorities(authority);
+    }
+
+    /**
+     * Get the roles of the current user.
+     *
+     * @return a Flux of role strings
+     */
+    public static Flux<String> getCurrentUserRoles() {
+        return ReactiveSecurityContextHolder.getContext()
+            .map(SecurityContext::getAuthentication)
+            .map(Authentication::getAuthorities)
+            .flatMapMany(authorities ->
+                Flux.fromIterable(authorities).map(GrantedAuthority::getAuthority).filter(role -> role.startsWith("ROLE_"))
+            );
     }
 
     public static List<GrantedAuthority> extractAuthorityFromClaims(Map<String, Object> claims) {
