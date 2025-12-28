@@ -1,0 +1,47 @@
+{
+  "annotations": {
+    "changelogDate": "20251228051104"
+  },
+  "applications": "*",
+  "clientRootFolder": "rmsservice",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "quantity",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "unitPrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "totalPrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "microserviceName": "rmsservice",
+  "name": "OrderItemCustomization",
+  "relationships": [
+    {
+      "otherEntityName": "orderItem",
+      "relationshipName": "orderItem",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "menuItemAddon",
+      "relationshipName": "menuItemAddon",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

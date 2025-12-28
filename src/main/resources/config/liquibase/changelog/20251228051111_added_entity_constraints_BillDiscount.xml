@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity BillDiscount.
+    -->
+    <changeSet id="20251228051111-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="bill_id"
+                                 baseTableName="bill_discount"
+                                 constraintName="fk_bill_discount__bill_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="bill"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="discount_id"
+                                 baseTableName="bill_discount"
+                                 constraintName="fk_bill_discount__discount_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="discount"
+                                 />
+    </changeSet>
+</databaseChangeLog>

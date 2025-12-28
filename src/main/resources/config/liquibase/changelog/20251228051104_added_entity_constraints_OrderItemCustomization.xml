@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity OrderItemCustomization.
+    -->
+    <changeSet id="20251228051104-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="order_item_id"
+                                 baseTableName="order_item_customization"
+                                 constraintName="fk_order_item_customization__order_item_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="order_item"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="menu_item_addon_id"
+                                 baseTableName="order_item_customization"
+                                 constraintName="fk_order_item_customization__menu_item_addon_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="menu_item_addon"
+                                 />
+    </changeSet>
+</databaseChangeLog>

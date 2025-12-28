@@ -1,0 +1,65 @@
+// ============================================================================
+// Order Management Entities
+// ============================================================================
+
+entity Order {
+    orderNumber String required unique maxlength(50)
+    orderType String required maxlength(50)
+    orderSource String required maxlength(50)
+    status String maxlength(50)
+    orderDate Instant required
+    estimatedReadyTime Instant
+    actualReadyTime Instant
+    specialInstructions TextBlob
+    subtotal BigDecimal
+    taxAmount BigDecimal
+    discountAmount BigDecimal
+    totalAmount BigDecimal
+    isPaid Boolean
+    cancelledAt Instant
+    cancelledBy String maxlength(255)
+    cancellationReason TextBlob
+}
+
+entity OrderItem {
+    quantity Integer required
+    unitPrice BigDecimal required
+    itemTotal BigDecimal required
+    specialInstructions TextBlob
+    status String maxlength(50)
+}
+
+entity OrderItemCustomization {
+    quantity Integer
+    unitPrice BigDecimal required
+    totalPrice BigDecimal required
+}
+
+entity OrderStatusHistory {
+    previousStatus String maxlength(50)
+    newStatus String required maxlength(50)
+    changedAt Instant required
+    changedBy String maxlength(255)
+    notes TextBlob
+}
+
+// Relationships
+relationship ManyToOne {
+    Order{branch} to Branch
+    Order{customer} to Customer
+    Order{user} to RmsUser
+    Order{branchTable} to BranchTable
+    OrderItem{order} to Order
+    OrderItem{menuItem} to MenuItem
+    OrderItem{menuItemVariant} to MenuItemVariant
+    OrderItemCustomization{orderItem} to OrderItem
+    OrderItemCustomization{menuItemAddon} to MenuItemAddon
+    OrderStatusHistory{order} to Order
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+paginate Order, OrderItem, OrderItemCustomization, OrderStatusHistory with pagination
+search Order with elasticsearch
+

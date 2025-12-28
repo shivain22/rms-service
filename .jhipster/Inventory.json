@@ -1,0 +1,62 @@
+{
+  "annotations": {
+    "changelogDate": "20251228051059"
+  },
+  "applications": "*",
+  "clientRootFolder": "rmsservice",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "currentStock",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "unit",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "minStockLevel",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "maxStockLevel",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "lastUpdatedAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "lastUpdatedBy",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "255"
+    }
+  ],
+  "microserviceName": "rmsservice",
+  "name": "Inventory",
+  "relationships": [
+    {
+      "otherEntityName": "branch",
+      "relationshipName": "branch",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "menuItem",
+      "relationshipName": "menuItem",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

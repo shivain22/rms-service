@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity TableAssignment.
+    -->
+    <changeSet id="20251228051053-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="branch_table_id"
+                                 baseTableName="table_assignment"
+                                 constraintName="fk_table_assignment__branch_table_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="branch_table"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="shift_id"
+                                 baseTableName="table_assignment"
+                                 constraintName="fk_table_assignment__shift_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="shift"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="supervisor_id"
+                                 baseTableName="table_assignment"
+                                 constraintName="fk_table_assignment__supervisor_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="rms_user"
+                                 />
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity MenuCategory.
+    -->
+    <changeSet id="20251228051055-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="restaurant_id"
+                                 baseTableName="menu_category"
+                                 constraintName="fk_menu_category__restaurant_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="restaurant"
+                                 />
+    </changeSet>
+</databaseChangeLog>

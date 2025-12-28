@@ -1,0 +1,566 @@
+@startuml Restaurant Management System ER Diagram
+
+!define PK_COLOR #FFE6E6
+!define FK_COLOR #E6F3FF
+!define TABLE_COLOR #F0F0F0
+
+skinparam linetype ortho
+skinparam roundcorner 10
+
+package "Restaurant & Branch" {
+    entity RESTAURANT {
+        * id : UUID <<PK>>
+        --
+        * name : VARCHAR(255)
+        * code : VARCHAR(50) <<UK>>
+        description : TEXT
+        logo_url : VARCHAR(500)
+        contact_email : VARCHAR(255)
+        contact_phone : VARCHAR(20)
+        address_line1 : VARCHAR(255)
+        city : VARCHAR(100)
+        state : VARCHAR(100)
+        country : VARCHAR(100)
+        postal_code : VARCHAR(20)
+        timezone : VARCHAR(50)
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+        version : INTEGER
+    }
+    
+    entity BRANCH {
+        * id : UUID <<PK>>
+        --
+        * restaurant_id : UUID <<FK>>
+        * name : VARCHAR(255)
+        * code : VARCHAR(50)
+        description : TEXT
+        contact_email : VARCHAR(255)
+        contact_phone : VARCHAR(20)
+        address_line1 : VARCHAR(255)
+        city : VARCHAR(100)
+        state : VARCHAR(100)
+        country : VARCHAR(100)
+        postal_code : VARCHAR(20)
+        latitude : DECIMAL(10,8)
+        longitude : DECIMAL(11,8)
+        opening_time : TIME
+        closing_time : TIME
+        timezone : VARCHAR(50)
+        max_capacity : INTEGER
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+        version : INTEGER
+    }
+}
+
+package "User Management" {
+    entity USER {
+        * id : UUID <<PK>>
+        --
+        * external_user_id : VARCHAR(255) <<UK>>
+        * username : VARCHAR(100) <<UK>>
+        email : VARCHAR(255) <<UK>>
+        phone : VARCHAR(20)
+        first_name : VARCHAR(100)
+        last_name : VARCHAR(100)
+        display_name : VARCHAR(255)
+        profile_image_url : VARCHAR(500)
+        * is_active : BOOLEAN
+        last_sync_at : TIMESTAMP
+        * sync_status : VARCHAR(50)
+        sync_error : TEXT
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+        version : INTEGER
+    }
+    
+    entity USER_BRANCH_ROLE {
+        * id : UUID <<PK>>
+        --
+        * user_id : UUID <<FK>>
+        * branch_id : UUID <<FK>>
+        * role : VARCHAR(50)
+        * is_active : BOOLEAN
+        * assigned_at : TIMESTAMP
+        assigned_by : VARCHAR(255)
+        revoked_at : TIMESTAMP
+        revoked_by : VARCHAR(255)
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+    
+    entity USER_SYNC_LOG {
+        * id : UUID <<PK>>
+        --
+        * user_id : UUID <<FK>>
+        * sync_type : VARCHAR(50)
+        * sync_status : VARCHAR(50)
+        external_user_id : VARCHAR(255)
+        request_payload : JSONB
+        response_payload : JSONB
+        error_message : TEXT
+        * synced_at : TIMESTAMP
+        synced_by : VARCHAR(255)
+    }
+}
+
+package "Table Management" {
+    entity BRANCH_TABLE {
+        * id : UUID <<PK>>
+        --
+        * branch_id : UUID <<FK>>
+        * table_number : VARCHAR(50)
+        table_name : VARCHAR(255)
+        * capacity : INTEGER
+        floor : VARCHAR(50)
+        section : VARCHAR(100)
+        * status : VARCHAR(50)
+        qr_code : VARCHAR(500)
+        qr_code_url : VARCHAR(500)
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+        version : INTEGER
+    }
+    
+    entity SHIFT {
+        * id : UUID <<PK>>
+        --
+        * branch_id : UUID <<FK>>
+        * shift_name : VARCHAR(100)
+        * start_time : TIME
+        * end_time : TIME
+        * shift_date : DATE
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+    
+    entity TABLE_ASSIGNMENT {
+        * id : UUID <<PK>>
+        --
+        * branch_table_id : UUID <<FK>>
+        * shift_id : UUID <<FK>>
+        * supervisor_id : UUID <<FK>>
+        * assignment_date : DATE
+        start_time : TIMESTAMP
+        end_time : TIMESTAMP
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+    }
+    
+    entity TABLE_WAITER_ASSIGNMENT {
+        * id : UUID <<PK>>
+        --
+        * table_assignment_id : UUID <<FK>>
+        * waiter_id : UUID <<FK>>
+        * assignment_date : DATE
+        start_time : TIMESTAMP
+        end_time : TIMESTAMP
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+    }
+}
+
+package "Menu Management" {
+    entity MENU_CATEGORY {
+        * id : UUID <<PK>>
+        --
+        * restaurant_id : UUID <<FK>>
+        * name : VARCHAR(255)
+        * code : VARCHAR(50)
+        description : TEXT
+        display_order : INTEGER
+        image_url : VARCHAR(500)
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+        version : INTEGER
+    }
+    
+    entity MENU_ITEM {
+        * id : UUID <<PK>>
+        --
+        * branch_id : UUID <<FK>>
+        * menu_category_id : UUID <<FK>>
+        * name : VARCHAR(255)
+        * code : VARCHAR(50)
+        description : TEXT
+        * item_type : VARCHAR(50)
+        cuisine_type : VARCHAR(100)
+        * is_vegetarian : BOOLEAN
+        is_vegan : BOOLEAN
+        * is_alcoholic : BOOLEAN
+        spice_level : INTEGER
+        preparation_time : INTEGER
+        * base_price : DECIMAL(10,2)
+        image_url : VARCHAR(500)
+        * is_available : BOOLEAN
+        * is_active : BOOLEAN
+        display_order : INTEGER
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+        version : INTEGER
+    }
+    
+    entity MENU_ITEM_VARIANT {
+        * id : UUID <<PK>>
+        --
+        * menu_item_id : UUID <<FK>>
+        * variant_name : VARCHAR(100)
+        * variant_code : VARCHAR(50)
+        * price_modifier : DECIMAL(10,2)
+        is_default : BOOLEAN
+        display_order : INTEGER
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+    
+    entity MENU_ITEM_ADDON {
+        * id : UUID <<PK>>
+        --
+        * menu_item_id : UUID <<FK>>
+        * addon_name : VARCHAR(100)
+        * addon_code : VARCHAR(50)
+        * price : DECIMAL(10,2)
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+    
+    entity INVENTORY {
+        * id : UUID <<PK>>
+        --
+        * branch_id : UUID <<FK>>
+        * menu_item_id : UUID <<FK>>
+        * current_stock : DECIMAL(10,2)
+        unit : VARCHAR(50)
+        min_stock_level : DECIMAL(10,2)
+        max_stock_level : DECIMAL(10,2)
+        * last_updated_at : TIMESTAMP
+        last_updated_by : VARCHAR(255)
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+}
+
+package "Customer Management" {
+    entity CUSTOMER {
+        * id : UUID <<PK>>
+        --
+        user_id : UUID <<FK>>
+        customer_code : VARCHAR(50) <<UK>>
+        phone : VARCHAR(20)
+        email : VARCHAR(255)
+        first_name : VARCHAR(100)
+        last_name : VARCHAR(100)
+        date_of_birth : DATE
+        address_line1 : VARCHAR(255)
+        city : VARCHAR(100)
+        state : VARCHAR(100)
+        country : VARCHAR(100)
+        postal_code : VARCHAR(20)
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+        version : INTEGER
+    }
+    
+    entity CUSTOMER_LOYALTY {
+        * id : UUID <<PK>>
+        --
+        * customer_id : UUID <<FK>>
+        * restaurant_id : UUID <<FK>>
+        * loyalty_points : DECIMAL(10,2)
+        * tier : VARCHAR(50)
+        * enrolled_at : TIMESTAMP
+        last_points_earned_at : TIMESTAMP
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+}
+
+package "Order Management" {
+    entity ORDER {
+        * id : UUID <<PK>>
+        --
+        * branch_id : UUID <<FK>>
+        * order_number : VARCHAR(50) <<UK>>
+        customer_id : UUID <<FK>>
+        user_id : UUID <<FK>>
+        branch_table_id : UUID <<FK>>
+        * order_type : VARCHAR(50)
+        * order_source : VARCHAR(50)
+        * status : VARCHAR(50)
+        * order_date : TIMESTAMP
+        estimated_ready_time : TIMESTAMP
+        actual_ready_time : TIMESTAMP
+        special_instructions : TEXT
+        * subtotal : DECIMAL(10,2)
+        * tax_amount : DECIMAL(10,2)
+        * discount_amount : DECIMAL(10,2)
+        * total_amount : DECIMAL(10,2)
+        * is_paid : BOOLEAN
+        cancelled_at : TIMESTAMP
+        cancelled_by : VARCHAR(255)
+        cancellation_reason : TEXT
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+        version : INTEGER
+    }
+    
+    entity ORDER_ITEM {
+        * id : UUID <<PK>>
+        --
+        * order_id : UUID <<FK>>
+        * menu_item_id : UUID <<FK>>
+        menu_item_variant_id : UUID <<FK>>
+        * quantity : INTEGER
+        * unit_price : DECIMAL(10,2)
+        * item_total : DECIMAL(10,2)
+        special_instructions : TEXT
+        * status : VARCHAR(50)
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+    
+    entity ORDER_ITEM_CUSTOMIZATION {
+        * id : UUID <<PK>>
+        --
+        * order_item_id : UUID <<FK>>
+        * menu_item_addon_id : UUID <<FK>>
+        * quantity : INTEGER
+        * unit_price : DECIMAL(10,2)
+        * total_price : DECIMAL(10,2)
+        * created_at : TIMESTAMP
+    }
+    
+    entity ORDER_STATUS_HISTORY {
+        * id : UUID <<PK>>
+        --
+        * order_id : UUID <<FK>>
+        previous_status : VARCHAR(50)
+        * new_status : VARCHAR(50)
+        * changed_at : TIMESTAMP
+        changed_by : VARCHAR(255)
+        notes : TEXT
+    }
+}
+
+package "Billing & Payments" {
+    entity TAX_CONFIG {
+        * id : UUID <<PK>>
+        --
+        * restaurant_id : UUID <<FK>>
+        * tax_name : VARCHAR(100)
+        * tax_code : VARCHAR(50)
+        * tax_rate : DECIMAL(5,2)
+        * tax_type : VARCHAR(50)
+        is_applicable_to_food : BOOLEAN
+        is_applicable_to_beverage : BOOLEAN
+        is_applicable_to_alcohol : BOOLEAN
+        * effective_from : DATE
+        effective_to : DATE
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+    }
+    
+    entity DISCOUNT {
+        * id : UUID <<PK>>
+        --
+        * restaurant_id : UUID <<FK>>
+        discount_code : VARCHAR(50) <<UK>>
+        * discount_name : VARCHAR(255)
+        * discount_type : VARCHAR(50)
+        * discount_value : DECIMAL(10,2)
+        min_order_amount : DECIMAL(10,2)
+        max_discount_amount : DECIMAL(10,2)
+        applicable_to : VARCHAR(50)
+        * valid_from : TIMESTAMP
+        valid_to : TIMESTAMP
+        max_uses : INTEGER
+        current_uses : INTEGER
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        created_by : VARCHAR(255)
+        * updated_at : TIMESTAMP
+        updated_by : VARCHAR(255)
+    }
+    
+    entity BILL {
+        * id : UUID <<PK>>
+        --
+        * order_id : UUID <<FK>>
+        * branch_id : UUID <<FK>>
+        * bill_number : VARCHAR(50) <<UK>>
+        customer_id : UUID <<FK>>
+        * bill_date : TIMESTAMP
+        * subtotal : DECIMAL(10,2)
+        * tax_amount : DECIMAL(10,2)
+        * discount_amount : DECIMAL(10,2)
+        service_charge : DECIMAL(10,2)
+        * total_amount : DECIMAL(10,2)
+        * amount_paid : DECIMAL(10,2)
+        * amount_due : DECIMAL(10,2)
+        * status : VARCHAR(50)
+        generated_by : VARCHAR(255)
+        notes : TEXT
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+        version : INTEGER
+    }
+    
+    entity BILL_ITEM {
+        * id : UUID <<PK>>
+        --
+        * bill_id : UUID <<FK>>
+        * order_item_id : UUID <<FK>>
+        * item_name : VARCHAR(255)
+        * quantity : INTEGER
+        * unit_price : DECIMAL(10,2)
+        * item_total : DECIMAL(10,2)
+        * created_at : TIMESTAMP
+    }
+    
+    entity BILL_TAX {
+        * id : UUID <<PK>>
+        --
+        * bill_id : UUID <<FK>>
+        * tax_config_id : UUID <<FK>>
+        * tax_name : VARCHAR(100)
+        * tax_rate : DECIMAL(5,2)
+        * taxable_amount : DECIMAL(10,2)
+        * tax_amount : DECIMAL(10,2)
+        * created_at : TIMESTAMP
+    }
+    
+    entity BILL_DISCOUNT {
+        * id : UUID <<PK>>
+        --
+        * bill_id : UUID <<FK>>
+        * discount_id : UUID <<FK>>
+        discount_code : VARCHAR(50)
+        * discount_type : VARCHAR(50)
+        * discount_value : DECIMAL(10,2)
+        * discount_amount : DECIMAL(10,2)
+        * created_at : TIMESTAMP
+    }
+    
+    entity PAYMENT_METHOD {
+        * id : UUID <<PK>>
+        --
+        * method_code : VARCHAR(50) <<UK>>
+        * method_name : VARCHAR(100)
+        description : TEXT
+        * is_active : BOOLEAN
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+    }
+    
+    entity PAYMENT {
+        * id : UUID <<PK>>
+        --
+        * bill_id : UUID <<FK>>
+        * payment_method_id : UUID <<FK>>
+        * payment_number : VARCHAR(50) <<UK>>
+        * amount : DECIMAL(10,2)
+        * payment_date : TIMESTAMP
+        transaction_id : VARCHAR(255)
+        payment_gateway_response : JSONB
+        * status : VARCHAR(50)
+        processed_by : VARCHAR(255)
+        notes : TEXT
+        refunded_at : TIMESTAMP
+        refunded_by : VARCHAR(255)
+        refund_reason : TEXT
+        * created_at : TIMESTAMP
+        * updated_at : TIMESTAMP
+        version : INTEGER
+    }
+}
+
+' Relationships
+RESTAURANT ||--o{ BRANCH : "has"
+RESTAURANT ||--o{ MENU_CATEGORY : "has"
+RESTAURANT ||--o{ TAX_CONFIG : "has"
+RESTAURANT ||--o{ DISCOUNT : "has"
+RESTAURANT ||--o{ CUSTOMER_LOYALTY : "has"
+
+BRANCH ||--o{ BRANCH_TABLE : "has"
+BRANCH ||--o{ MENU_ITEM : "has"
+BRANCH ||--o{ ORDER : "receives"
+BRANCH ||--o{ USER_BRANCH_ROLE : "assigned"
+BRANCH ||--o{ SHIFT : "has"
+BRANCH ||--o{ BILL : "generates"
+BRANCH ||--o{ INVENTORY : "tracks"
+
+USER ||--o{ USER_BRANCH_ROLE : "has"
+USER ||--o{ ORDER : "places"
+USER ||--o{ TABLE_ASSIGNMENT : "supervisor"
+USER ||--o{ TABLE_WAITER_ASSIGNMENT : "waiter"
+USER ||--o{ USER_SYNC_LOG : "tracked"
+USER ||--o| CUSTOMER : "linked"
+
+MENU_CATEGORY ||--o{ MENU_ITEM : "contains"
+MENU_ITEM ||--o{ MENU_ITEM_VARIANT : "has"
+MENU_ITEM ||--o{ MENU_ITEM_ADDON : "has"
+MENU_ITEM ||--o{ ORDER_ITEM : "ordered_as"
+MENU_ITEM ||--o{ INVENTORY : "tracked"
+
+BRANCH_TABLE ||--o{ TABLE_ASSIGNMENT : "has"
+BRANCH_TABLE ||--o{ ORDER : "used_for"
+
+TABLE_ASSIGNMENT ||--o{ TABLE_WAITER_ASSIGNMENT : "has"
+TABLE_ASSIGNMENT }o--|| SHIFT : "during"
+
+ORDER ||--o{ ORDER_ITEM : "contains"
+ORDER ||--o{ ORDER_STATUS_HISTORY : "tracked"
+ORDER ||--|| BILL : "generates"
+
+ORDER_ITEM ||--o{ ORDER_ITEM_CUSTOMIZATION : "has"
+ORDER_ITEM }o--o| MENU_ITEM_VARIANT : "variant"
+
+ORDER_ITEM_CUSTOMIZATION }o--|| MENU_ITEM_ADDON : "addon"
+
+BILL ||--o{ BILL_ITEM : "contains"
+BILL ||--o{ BILL_TAX : "has"
+BILL ||--o{ BILL_DISCOUNT : "has"
+BILL ||--o{ PAYMENT : "paid_by"
+
+BILL_ITEM }o--|| ORDER_ITEM : "references"
+BILL_TAX }o--|| TAX_CONFIG : "references"
+BILL_DISCOUNT }o--|| DISCOUNT : "references"
+
+PAYMENT }o--|| PAYMENT_METHOD : "uses"
+
+CUSTOMER ||--o{ ORDER : "places"
+CUSTOMER ||--o{ CUSTOMER_LOYALTY : "enrolled"
+
+@enduml
+

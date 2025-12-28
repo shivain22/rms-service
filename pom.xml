@@ -45,6 +45,7 @@
         <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
         <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+        <javers-spring-boot-starter-sql.version>7.8.0</javers-spring-boot-starter-sql.version>
         <jhipster-framework.version>8.11.0</jhipster-framework.version>
         <jib-maven-plugin.architecture>amd64</jib-maven-plugin.architecture>
         <jib-maven-plugin.image>eclipse-temurin:17-jre-focal</jib-maven-plugin.image>
@@ -315,6 +316,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.javers</groupId>
+            <artifactId>javers-spring-boot-starter-sql</artifactId>
+            <version>${javers-spring-boot-starter-sql.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-console</artifactId>
             <scope>test</scope>
@@ -347,6 +353,10 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>r2dbc-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-pool</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

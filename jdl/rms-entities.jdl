@@ -1,0 +1,444 @@
+// ============================================================================
+// Restaurant Management System - Complete Entity Definitions
+// ============================================================================
+// This is the main JDL file that imports all entity modules
+// Usage: jhipster import-jdl rms-entities.jdl
+// ============================================================================
+
+// Import all entity modules
+// Note: JHipster JDL doesn't support import statements directly
+// You need to merge all JDL files or use jhipster jdl command with multiple files
+// Alternative: Use jhipster jdl *.jdl to import all files
+
+// ============================================================================
+// Restaurant & Branch Management
+// ============================================================================
+
+entity Restaurant {
+    id UUID
+    name String required maxlength(255)
+    code String required unique maxlength(50)
+    description TextBlob
+    logoUrl String maxlength(500)
+    contactEmail String maxlength(255)
+    contactPhone String maxlength(20)
+    addressLine1 String maxlength(255)
+    addressLine2 String maxlength(255)
+    city String maxlength(100)
+    state String maxlength(100)
+    country String maxlength(100)
+    postalCode String maxlength(20)
+    timezone String maxlength(50)
+    isActive Boolean
+}
+
+entity Branch {
+    id UUID
+    name String required maxlength(255)
+    code String required maxlength(50)
+    description TextBlob
+    contactEmail String maxlength(255)
+    contactPhone String maxlength(20)
+    addressLine1 String maxlength(255)
+    addressLine2 String maxlength(255)
+    city String maxlength(100)
+    state String maxlength(100)
+    country String maxlength(100)
+    postalCode String maxlength(20)
+    latitude BigDecimal
+    longitude BigDecimal
+    openingTime LocalTime
+    closingTime LocalTime
+    timezone String maxlength(50)
+    maxCapacity Integer
+    isActive Boolean
+}
+
+// ============================================================================
+// User Management
+// ============================================================================
+
+entity RmsUser {
+    id UUID
+    externalUserId String required unique maxlength(255)
+    username String required unique maxlength(100)
+    email String unique maxlength(255)
+    phone String maxlength(20)
+    firstName String maxlength(100)
+    lastName String maxlength(100)
+    displayName String maxlength(255)
+    profileImageUrl String maxlength(500)
+    isActive Boolean
+    lastSyncAt Instant
+    syncStatus String maxlength(50)
+    syncError TextBlob
+}
+
+entity UserBranchRole {
+    id UUID
+    role String required maxlength(50)
+    isActive Boolean
+    assignedAt Instant required
+    assignedBy String maxlength(255)
+    revokedAt Instant
+    revokedBy String maxlength(255)
+}
+
+entity UserSyncLog {
+    id UUID
+    syncType String required maxlength(50)
+    syncStatus String required maxlength(50)
+    externalUserId String maxlength(255)
+    requestPayload TextBlob
+    responsePayload TextBlob
+    errorMessage TextBlob
+    syncedAt Instant required
+    syncedBy String maxlength(255)
+}
+
+// ============================================================================
+// Table Management
+// ============================================================================
+
+entity BranchTable {
+    id UUID
+    tableNumber String required maxlength(50)
+    tableName String maxlength(255)
+    capacity Integer required
+    floor String maxlength(50)
+    section String maxlength(100)
+    status String maxlength(50)
+    qrCode String maxlength(500)
+    qrCodeUrl String maxlength(500)
+    isActive Boolean
+}
+
+entity Shift {
+    id UUID
+    shiftName String required maxlength(100)
+    startTime LocalTime required
+    endTime LocalTime required
+    shiftDate LocalDate required
+    isActive Boolean
+}
+
+entity TableAssignment {
+    id UUID
+    assignmentDate LocalDate required
+    startTime Instant
+    endTime Instant
+    isActive Boolean
+}
+
+entity TableWaiterAssignment {
+    id UUID
+    assignmentDate LocalDate required
+    startTime Instant
+    endTime Instant
+    isActive Boolean
+}
+
+// ============================================================================
+// Menu Management
+// ============================================================================
+
+entity MenuCategory {
+    id UUID
+    name String required maxlength(255)
+    code String required maxlength(50)
+    description TextBlob
+    displayOrder Integer
+    imageUrl String maxlength(500)
+    isActive Boolean
+}
+
+entity MenuItem {
+    id UUID
+    name String required maxlength(255)
+    code String required maxlength(50)
+    description TextBlob
+    itemType String required maxlength(50)
+    cuisineType String maxlength(100)
+    isVegetarian Boolean
+    isVegan Boolean
+    isAlcoholic Boolean
+    spiceLevel Integer
+    preparationTime Integer
+    basePrice BigDecimal required
+    imageUrl String maxlength(500)
+    isAvailable Boolean
+    isActive Boolean
+    displayOrder Integer
+}
+
+entity MenuItemVariant {
+    id UUID
+    variantName String required maxlength(100)
+    variantCode String required maxlength(50)
+    priceModifier BigDecimal
+    isDefault Boolean
+    displayOrder Integer
+    isActive Boolean
+}
+
+entity MenuItemAddon {
+    id UUID
+    addonName String required maxlength(100)
+    addonCode String required maxlength(50)
+    price BigDecimal required
+    isActive Boolean
+}
+
+entity Inventory {
+    id UUID
+    currentStock BigDecimal
+    unit String maxlength(50)
+    minStockLevel BigDecimal
+    maxStockLevel BigDecimal
+    lastUpdatedAt Instant required
+    lastUpdatedBy String maxlength(255)
+}
+
+// ============================================================================
+// Customer Management
+// ============================================================================
+
+entity Customer {
+    id UUID
+    customerCode String unique maxlength(50)
+    phone String maxlength(20)
+    email String maxlength(255)
+    firstName String maxlength(100)
+    lastName String maxlength(100)
+    dateOfBirth LocalDate
+    addressLine1 String maxlength(255)
+    addressLine2 String maxlength(255)
+    city String maxlength(100)
+    state String maxlength(100)
+    country String maxlength(100)
+    postalCode String maxlength(20)
+    isActive Boolean
+}
+
+entity CustomerLoyalty {
+    id UUID
+    loyaltyPoints BigDecimal
+    tier String maxlength(50)
+    enrolledAt Instant required
+    lastPointsEarnedAt Instant
+    isActive Boolean
+}
+
+// ============================================================================
+// Order Management
+// ============================================================================
+
+entity Order {
+    id UUID
+    orderNumber String required unique maxlength(50)
+    orderType String required maxlength(50)
+    orderSource String required maxlength(50)
+    status String maxlength(50)
+    orderDate Instant required
+    estimatedReadyTime Instant
+    actualReadyTime Instant
+    specialInstructions TextBlob
+    subtotal BigDecimal
+    taxAmount BigDecimal
+    discountAmount BigDecimal
+    totalAmount BigDecimal
+    isPaid Boolean
+    cancelledAt Instant
+    cancelledBy String maxlength(255)
+    cancellationReason TextBlob
+}
+
+entity OrderItem {
+    id UUID
+    quantity Integer required
+    unitPrice BigDecimal required
+    itemTotal BigDecimal required
+    specialInstructions TextBlob
+    status String maxlength(50)
+}
+
+entity OrderItemCustomization {
+    id UUID
+    quantity Integer
+    unitPrice BigDecimal required
+    totalPrice BigDecimal required
+}
+
+entity OrderStatusHistory {
+    id UUID
+    previousStatus String maxlength(50)
+    newStatus String required maxlength(50)
+    changedAt Instant required
+    changedBy String maxlength(255)
+    notes TextBlob
+}
+
+// ============================================================================
+// Billing & Payments
+// ============================================================================
+
+entity TaxConfig {
+    id UUID
+    taxName String required maxlength(100)
+    taxCode String required maxlength(50)
+    taxRate BigDecimal required
+    taxType String required maxlength(50)
+    isApplicableToFood Boolean
+    isApplicableToBeverage Boolean
+    isApplicableToAlcohol Boolean
+    effectiveFrom LocalDate required
+    effectiveTo LocalDate
+    isActive Boolean
+}
+
+entity Discount {
+    id UUID
+    discountCode String unique maxlength(50)
+    discountName String required maxlength(255)
+    discountType String required maxlength(50)
+    discountValue BigDecimal required
+    minOrderAmount BigDecimal
+    maxDiscountAmount BigDecimal
+    applicableTo String maxlength(50)
+    validFrom Instant required
+    validTo Instant
+    maxUses Integer
+    currentUses Integer
+    isActive Boolean
+}
+
+entity Bill {
+    id UUID
+    billNumber String required unique maxlength(50)
+    billDate Instant required
+    subtotal BigDecimal required
+    taxAmount BigDecimal
+    discountAmount BigDecimal
+    serviceCharge BigDecimal
+    totalAmount BigDecimal required
+    amountPaid BigDecimal
+    amountDue BigDecimal required
+    status String maxlength(50)
+    generatedBy String maxlength(255)
+    notes TextBlob
+}
+
+entity BillItem {
+    id UUID
+    itemName String required maxlength(255)
+    quantity Integer required
+    unitPrice BigDecimal required
+    itemTotal BigDecimal required
+}
+
+entity BillTax {
+    id UUID
+    taxName String required maxlength(100)
+    taxRate BigDecimal required
+    taxableAmount BigDecimal required
+    taxAmount BigDecimal required
+}
+
+entity BillDiscount {
+    id UUID
+    discountCode String maxlength(50)
+    discountType String required maxlength(50)
+    discountValue BigDecimal required
+    discountAmount BigDecimal required
+}
+
+entity PaymentMethod {
+    id UUID
+    methodCode String required unique maxlength(50)
+    methodName String required maxlength(100)
+    description TextBlob
+    isActive Boolean
+}
+
+entity Payment {
+    id UUID
+    paymentNumber String required unique maxlength(50)
+    amount BigDecimal required
+    paymentDate Instant required
+    transactionId String maxlength(255)
+    paymentGatewayResponse TextBlob
+    status String maxlength(50)
+    processedBy String maxlength(255)
+    notes TextBlob
+    refundedAt Instant
+    refundedBy String maxlength(255)
+    refundReason TextBlob
+}
+
+// ============================================================================
+// Relationships
+// ============================================================================
+
+relationship ManyToOne {
+    Branch{restaurant} to Restaurant
+    UserBranchRole{user} to RmsUser
+    UserBranchRole{branch} to Branch
+    UserSyncLog{user} to RmsUser
+    BranchTable{branch} to Branch
+    Shift{branch} to Branch
+    TableAssignment{branchTable} to BranchTable
+    TableAssignment{shift} to Shift
+    TableAssignment{supervisor} to RmsUser
+    TableWaiterAssignment{tableAssignment} to TableAssignment
+    TableWaiterAssignment{waiter} to RmsUser
+    MenuCategory{restaurant} to Restaurant
+    MenuItem{branch} to Branch
+    MenuItem{menuCategory} to MenuCategory
+    MenuItemVariant{menuItem} to MenuItem
+    MenuItemAddon{menuItem} to MenuItem
+    Inventory{branch} to Branch
+    Inventory{menuItem} to MenuItem
+    Customer{user} to RmsUser
+    CustomerLoyalty{customer} to Customer
+    CustomerLoyalty{restaurant} to Restaurant
+    Order{branch} to Branch
+    Order{customer} to Customer
+    Order{user} to RmsUser
+    Order{branchTable} to BranchTable
+    OrderItem{order} to Order
+    OrderItem{menuItem} to MenuItem
+    OrderItem{menuItemVariant} to MenuItemVariant
+    OrderItemCustomization{orderItem} to OrderItem
+    OrderItemCustomization{menuItemAddon} to MenuItemAddon
+    OrderStatusHistory{order} to Order
+    TaxConfig{restaurant} to Restaurant
+    Discount{restaurant} to Restaurant
+    Bill{order} to Order
+    Bill{branch} to Branch
+    Bill{customer} to Customer
+    BillItem{bill} to Bill
+    BillItem{orderItem} to OrderItem
+    BillTax{bill} to Bill
+    BillTax{taxConfig} to TaxConfig
+    BillDiscount{bill} to Bill
+    BillDiscount{discount} to Discount
+    Payment{bill} to Bill
+    Payment{paymentMethod} to PaymentMethod
+}
+
+// ============================================================================
+// Options
+// ============================================================================
+
+// DTOs with MapStruct
+dto * with mapstruct
+
+// Service layer with service classes
+service * with serviceClass
+
+// Pagination for main entities
+paginate Restaurant, Branch, RmsUser, UserBranchRole, BranchTable, Shift, MenuCategory, MenuItem, Customer, Order, Bill, Payment with pagination
+
+// Elasticsearch search for frequently searched entities
+search Restaurant, Branch, RmsUser, BranchTable, MenuCategory, MenuItem, Customer, Order, Bill, Payment with elasticsearch
+

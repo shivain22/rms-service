@@ -1,0 +1,75 @@
+{
+  "annotations": {
+    "changelogDate": "20251228051106"
+  },
+  "applications": "*",
+  "clientRootFolder": "rmsservice",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "taxName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "taxCode",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "taxRate",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "taxType",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "isApplicableToFood",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "isApplicableToBeverage",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "isApplicableToAlcohol",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "effectiveFrom",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "effectiveTo",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "isActive",
+      "fieldType": "Boolean"
+    }
+  ],
+  "microserviceName": "rmsservice",
+  "name": "TaxConfig",
+  "relationships": [
+    {
+      "otherEntityName": "restaurant",
+      "relationshipName": "restaurant",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

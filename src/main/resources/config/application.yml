@@ -247,4 +247,23 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+# Multi-tenant configuration
+multi-tenant:
+  enabled: true
+  tenant-id-header: X-Tenant-ID
+  jwt-tenant-claim: tenant_id
+  gateway:
+    base-url: http://localhost:8080
+    tenant-config-endpoint: /api/tenants/{tenantId}/database-config
+    connection-timeout: 5000
+    read-timeout: 10000
+  connection:
+    cache-ttl: 3600 # seconds
+    max-pool-size: 20
+    min-pool-size: 5
+    connection-timeout: 30000
+    validation-query: SELECT 1
+  fallback:
+    enabled: false
+    default-tenant-id: default
 # application:

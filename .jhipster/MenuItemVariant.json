@@ -1,0 +1,55 @@
+{
+  "annotations": {
+    "changelogDate": "20251228051057"
+  },
+  "applications": "*",
+  "clientRootFolder": "rmsservice",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "variantName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "variantCode",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "priceModifier",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "isDefault",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "displayOrder",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "isActive",
+      "fieldType": "Boolean"
+    }
+  ],
+  "microserviceName": "rmsservice",
+  "name": "MenuItemVariant",
+  "relationships": [
+    {
+      "otherEntityName": "menuItem",
+      "relationshipName": "menuItem",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

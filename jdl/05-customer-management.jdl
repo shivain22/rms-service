@@ -1,0 +1,41 @@
+// ============================================================================
+// Customer Management Entities
+// ============================================================================
+
+entity Customer {
+    customerCode String unique maxlength(50)
+    phone String maxlength(20)
+    email String maxlength(255)
+    firstName String maxlength(100)
+    lastName String maxlength(100)
+    dateOfBirth LocalDate
+    addressLine1 String maxlength(255)
+    addressLine2 String maxlength(255)
+    city String maxlength(100)
+    state String maxlength(100)
+    country String maxlength(100)
+    postalCode String maxlength(20)
+    isActive Boolean
+}
+
+entity CustomerLoyalty {
+    loyaltyPoints BigDecimal
+    tier String maxlength(50)
+    enrolledAt Instant required
+    lastPointsEarnedAt Instant
+    isActive Boolean
+}
+
+// Relationships
+relationship ManyToOne {
+    Customer{user} to RmsUser
+    CustomerLoyalty{customer} to Customer
+    CustomerLoyalty{restaurant} to Restaurant
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+paginate Customer, CustomerLoyalty with pagination
+search Customer with elasticsearch
+

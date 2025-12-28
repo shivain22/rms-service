@@ -1,0 +1,52 @@
+// ============================================================================
+// User Management Entities
+// ============================================================================
+
+entity RmsUser {
+    externalUserId String required unique maxlength(255)
+    username String required unique maxlength(100)
+    email String unique maxlength(255)
+    phone String maxlength(20)
+    firstName String maxlength(100)
+    lastName String maxlength(100)
+    displayName String maxlength(255)
+    profileImageUrl String maxlength(500)
+    isActive Boolean
+    lastSyncAt Instant
+    syncStatus String maxlength(50)
+    syncError TextBlob
+}
+
+entity UserBranchRole {
+    role String required maxlength(50)
+    isActive Boolean
+    assignedAt Instant required
+    assignedBy String maxlength(255)
+    revokedAt Instant
+    revokedBy String maxlength(255)
+}
+
+entity UserSyncLog {
+    syncType String required maxlength(50)
+    syncStatus String required maxlength(50)
+    externalUserId String maxlength(255)
+    requestPayload TextBlob
+    responsePayload TextBlob
+    errorMessage TextBlob
+    syncedAt Instant required
+    syncedBy String maxlength(255)
+}
+
+// Relationships
+relationship ManyToOne {
+    UserBranchRole{user} to RmsUser
+    UserBranchRole{branch} to Branch
+    UserSyncLog{user} to RmsUser
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+paginate RmsUser, UserBranchRole, UserSyncLog with pagination
+search RmsUser with elasticsearch
+

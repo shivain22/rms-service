@@ -1,0 +1,73 @@
+// ============================================================================
+// Menu Management Entities
+// ============================================================================
+
+entity MenuCategory {
+    name String required maxlength(255)
+    code String required maxlength(50)
+    description TextBlob
+    displayOrder Integer
+    imageUrl String maxlength(500)
+    isActive Boolean
+}
+
+entity MenuItem {
+    name String required maxlength(255)
+    code String required maxlength(50)
+    description TextBlob
+    itemType String required maxlength(50)
+    cuisineType String maxlength(100)
+    isVegetarian Boolean
+    isVegan Boolean
+    isAlcoholic Boolean
+    spiceLevel Integer
+    preparationTime Integer
+    basePrice BigDecimal required
+    imageUrl String maxlength(500)
+    isAvailable Boolean
+    isActive Boolean
+    displayOrder Integer
+}
+
+entity MenuItemVariant {
+    variantName String required maxlength(100)
+    variantCode String required maxlength(50)
+    priceModifier BigDecimal
+    isDefault Boolean
+    displayOrder Integer
+    isActive Boolean
+}
+
+entity MenuItemAddon {
+    addonName String required maxlength(100)
+    addonCode String required maxlength(50)
+    price BigDecimal required
+    isActive Boolean
+}
+
+entity Inventory {
+    currentStock BigDecimal
+    unit String maxlength(50)
+    minStockLevel BigDecimal
+    maxStockLevel BigDecimal
+    lastUpdatedAt Instant required
+    lastUpdatedBy String maxlength(255)
+}
+
+// Relationships
+relationship ManyToOne {
+    MenuCategory{restaurant} to Restaurant
+    MenuItem{branch} to Branch
+    MenuItem{menuCategory} to MenuCategory
+    MenuItemVariant{menuItem} to MenuItem
+    MenuItemAddon{menuItem} to MenuItem
+    Inventory{branch} to Branch
+    Inventory{menuItem} to MenuItem
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+paginate MenuCategory, MenuItem, MenuItemVariant, MenuItemAddon, Inventory with pagination
+search MenuCategory, MenuItem with elasticsearch
+

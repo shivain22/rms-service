@@ -1,0 +1,112 @@
+// ============================================================================
+// Billing & Payment Entities
+// ============================================================================
+
+entity TaxConfig {
+    taxName String required maxlength(100)
+    taxCode String required maxlength(50)
+    taxRate BigDecimal required
+    taxType String required maxlength(50)
+    isApplicableToFood Boolean
+    isApplicableToBeverage Boolean
+    isApplicableToAlcohol Boolean
+    effectiveFrom LocalDate required
+    effectiveTo LocalDate
+    isActive Boolean
+}
+
+entity Discount {
+    discountCode String unique maxlength(50)
+    discountName String required maxlength(255)
+    discountType String required maxlength(50)
+    discountValue BigDecimal required
+    minOrderAmount BigDecimal
+    maxDiscountAmount BigDecimal
+    applicableTo String maxlength(50)
+    validFrom Instant required
+    validTo Instant
+    maxUses Integer
+    currentUses Integer
+    isActive Boolean
+}
+
+entity Bill {
+    billNumber String required unique maxlength(50)
+    billDate Instant required
+    subtotal BigDecimal required
+    taxAmount BigDecimal
+    discountAmount BigDecimal
+    serviceCharge BigDecimal
+    totalAmount BigDecimal required
+    amountPaid BigDecimal
+    amountDue BigDecimal required
+    status String maxlength(50)
+    generatedBy String maxlength(255)
+    notes TextBlob
+}
+
+entity BillItem {
+    itemName String required maxlength(255)
+    quantity Integer required
+    unitPrice BigDecimal required
+    itemTotal BigDecimal required
+}
+
+entity BillTax {
+    taxName String required maxlength(100)
+    taxRate BigDecimal required
+    taxableAmount BigDecimal required
+    taxAmount BigDecimal required
+}
+
+entity BillDiscount {
+    discountCode String maxlength(50)
+    discountType String required maxlength(50)
+    discountValue BigDecimal required
+    discountAmount BigDecimal required
+}
+
+entity PaymentMethod {
+    methodCode String required unique maxlength(50)
+    methodName String required maxlength(100)
+    description TextBlob
+    isActive Boolean
+}
+
+entity Payment {
+    paymentNumber String required unique maxlength(50)
+    amount BigDecimal required
+    paymentDate Instant required
+    transactionId String maxlength(255)
+    paymentGatewayResponse TextBlob
+    status String maxlength(50)
+    processedBy String maxlength(255)
+    notes TextBlob
+    refundedAt Instant
+    refundedBy String maxlength(255)
+    refundReason TextBlob
+}
+
+// Relationships
+relationship ManyToOne {
+    TaxConfig{restaurant} to Restaurant
+    Discount{restaurant} to Restaurant
+    Bill{order} to Order
+    Bill{branch} to Branch
+    Bill{customer} to Customer
+    BillItem{bill} to Bill
+    BillItem{orderItem} to OrderItem
+    BillTax{bill} to Bill
+    BillTax{taxConfig} to TaxConfig
+    BillDiscount{bill} to Bill
+    BillDiscount{discount} to Discount
+    Payment{bill} to Bill
+    Payment{paymentMethod} to PaymentMethod
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+paginate TaxConfig, Discount, Bill, BillItem, BillTax, BillDiscount, PaymentMethod, Payment with pagination
+search Bill, Payment with elasticsearch
+

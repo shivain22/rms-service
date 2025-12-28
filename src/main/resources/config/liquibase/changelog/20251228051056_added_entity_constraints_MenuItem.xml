@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity MenuItem.
+    -->
+    <changeSet id="20251228051056-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="branch_id"
+                                 baseTableName="menu_item"
+                                 constraintName="fk_menu_item__branch_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="branch"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="menu_category_id"
+                                 baseTableName="menu_item"
+                                 constraintName="fk_menu_item__menu_category_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="menu_category"
+                                 />
+    </changeSet>
+</databaseChangeLog>

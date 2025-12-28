@@ -33,6 +33,7 @@ class TechnicalStructureTest {
         .ignoreDependency(belongToAnyOf(RmsserviceApp.class), alwaysTrue())
         .ignoreDependency(alwaysTrue(), belongToAnyOf(
             com.atparui.rmsservice.config.Constants.class,
+            com.atparui.rmsservice.config.audit.AuditedEntity.class,
             com.atparui.rmsservice.config.ApplicationProperties.class
         ));
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import java.io.Serializable;
 import java.time.Instant;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -12,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
  * last modified by attributes.
  */
 @JsonIgnoreProperties(value = { "createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate" }, allowGetters = true)
+@DiffIgnore
 public abstract class AbstractAuditingEntity<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;

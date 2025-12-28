@@ -1,0 +1,55 @@
+// ============================================================================
+// Table Management Entities
+// ============================================================================
+
+entity BranchTable {
+    tableNumber String required maxlength(50)
+    tableName String maxlength(255)
+    capacity Integer required
+    floor String maxlength(50)
+    section String maxlength(100)
+    status String maxlength(50)
+    qrCode String maxlength(500)
+    qrCodeUrl String maxlength(500)
+    isActive Boolean
+}
+
+entity Shift {
+    shiftName String required maxlength(100)
+    startTime LocalTime required
+    endTime LocalTime required
+    shiftDate LocalDate required
+    isActive Boolean
+}
+
+entity TableAssignment {
+    assignmentDate LocalDate required
+    startTime Instant
+    endTime Instant
+    isActive Boolean
+}
+
+entity TableWaiterAssignment {
+    assignmentDate LocalDate required
+    startTime Instant
+    endTime Instant
+    isActive Boolean
+}
+
+// Relationships
+relationship ManyToOne {
+    BranchTable{branch} to Branch
+    Shift{branch} to Branch
+    TableAssignment{branchTable} to BranchTable
+    TableAssignment{shift} to Shift
+    TableAssignment{supervisor} to RmsUser
+    TableWaiterAssignment{tableAssignment} to TableAssignment
+    TableWaiterAssignment{waiter} to RmsUser
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+paginate BranchTable, Shift, TableAssignment, TableWaiterAssignment with pagination
+search BranchTable with elasticsearch
+

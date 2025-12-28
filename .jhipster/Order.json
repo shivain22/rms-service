@@ -1,0 +1,122 @@
+{
+  "annotations": {
+    "changelogDate": "20251228051102"
+  },
+  "applications": "*",
+  "clientRootFolder": "rmsservice",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "entityTableName": "jhi_order",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "orderNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "orderType",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "orderSource",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "orderDate",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "estimatedReadyTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "actualReadyTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "specialInstructions",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "subtotal",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "taxAmount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "discountAmount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "totalAmount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "isPaid",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "cancelledAt",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "cancelledBy",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "255"
+    },
+    {
+      "fieldName": "cancellationReason",
+      "fieldType": "TextBlob"
+    }
+  ],
+  "microserviceName": "rmsservice",
+  "name": "Order",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "branch",
+      "relationshipName": "branch",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "customer",
+      "relationshipName": "customer",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "rmsUser",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "branchTable",
+      "relationshipName": "branchTable",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "elasticsearch",
+  "service": "serviceClass"
+}

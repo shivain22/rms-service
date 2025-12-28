@@ -1,0 +1,105 @@
+{
+  "annotations": {
+    "changelogDate": "20251228051056"
+  },
+  "applications": "*",
+  "clientRootFolder": "rmsservice",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "255"
+    },
+    {
+      "fieldName": "code",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "itemType",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "cuisineType",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "isVegetarian",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "isVegan",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "isAlcoholic",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "spiceLevel",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "preparationTime",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "basePrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "imageUrl",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "isAvailable",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "isActive",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "displayOrder",
+      "fieldType": "Integer"
+    }
+  ],
+  "microserviceName": "rmsservice",
+  "name": "MenuItem",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "branch",
+      "relationshipName": "branch",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "menuCategory",
+      "relationshipName": "menuCategory",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "elasticsearch",
+  "service": "serviceClass"
+}

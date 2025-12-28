@@ -1,0 +1,53 @@
+// ============================================================================
+// Restaurant & Branch Management Entities
+// ============================================================================
+
+entity Restaurant {
+    name String required maxlength(255)
+    code String required unique maxlength(50)
+    description TextBlob
+    logoUrl String maxlength(500)
+    contactEmail String maxlength(255)
+    contactPhone String maxlength(20)
+    addressLine1 String maxlength(255)
+    addressLine2 String maxlength(255)
+    city String maxlength(100)
+    state String maxlength(100)
+    country String maxlength(100)
+    postalCode String maxlength(20)
+    timezone String maxlength(50)
+    isActive Boolean
+}
+
+entity Branch {
+    name String required maxlength(255)
+    code String required maxlength(50)
+    description TextBlob
+    contactEmail String maxlength(255)
+    contactPhone String maxlength(20)
+    addressLine1 String maxlength(255)
+    addressLine2 String maxlength(255)
+    city String maxlength(100)
+    state String maxlength(100)
+    country String maxlength(100)
+    postalCode String maxlength(20)
+    latitude BigDecimal
+    longitude BigDecimal
+    openingTime LocalTime
+    closingTime LocalTime
+    timezone String maxlength(50)
+    maxCapacity Integer
+    isActive Boolean
+}
+
+// Relationships
+relationship ManyToOne {
+    Branch{restaurant} to Restaurant
+}
+
+// Options
+dto * with mapstruct
+service * with serviceClass
+paginate Restaurant, Branch with pagination
+search Restaurant, Branch with elasticsearch
+

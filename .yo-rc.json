@@ -3,6 +3,12 @@
     "applicationType": "microservice",
     "authenticationType": "oauth2",
     "baseName": "rmsservice",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-entity-audit",
+        "version": "5.11.0"
+      }
+    ],
     "buildTool": "maven",
     "cacheProvider": null,
     "clientFramework": "no",
@@ -14,9 +20,40 @@
     "enableHibernateCache": null,
     "enableSwaggerCodegen": true,
     "enableTranslation": false,
-    "entities": [],
+    "entities": [
+      "Restaurant",
+      "Branch",
+      "RmsUser",
+      "UserBranchRole",
+      "UserSyncLog",
+      "BranchTable",
+      "Shift",
+      "TableAssignment",
+      "TableWaiterAssignment",
+      "MenuCategory",
+      "MenuItem",
+      "MenuItemVariant",
+      "MenuItemAddon",
+      "Inventory",
+      "Customer",
+      "CustomerLoyalty",
+      "Order",
+      "OrderItem",
+      "OrderItemCustomization",
+      "OrderStatusHistory",
+      "TaxConfig",
+      "Discount",
+      "Bill",
+      "BillItem",
+      "BillTax",
+      "BillDiscount",
+      "PaymentMethod",
+      "Payment"
+    ],
     "feignClient": null,
     "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "ZGVjNjVmYWFkMDRiYTE5MTJiNjI1ZTgyM2EwMGU0ODBmYmYyYjIzMTg0YTNhYWEzZDZiYmQ0MTk0OGY2NjJjZDc0ZWM3OWQzM2YzM2UxZDJlYWUyNzUxMzYwZGMxZTg3MDhmNDBkODY0ZTdmNDllYzE5MzkzMDJlYjM5ZDMwNmY=",
+    "lastLiquibaseTimestamp": 1766898673000,
     "messageBroker": "kafka",
     "microfrontend": null,
     "microfrontends": [],
@@ -32,5 +69,8 @@
     "syncUserWithIdp": true,
     "testFrameworks": ["gatling", "cucumber"],
     "withAdminUi": null
+  },
+  "generator-jhipster-entity-audit": {
+    "auditFramework": "javers"
   }
 }

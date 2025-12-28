@@ -2,6 +2,7 @@ package com.atparui.rmsservice;
 
 import com.atparui.rmsservice.config.ApplicationProperties;
 import com.atparui.rmsservice.config.CRLFLogConverter;
+import com.atparui.rmsservice.tenant.MultiTenantProperties;
 import jakarta.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -20,7 +21,7 @@ import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class })
+@EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class, MultiTenantProperties.class })
 public class RmsserviceApp {
 
     private static final Logger LOG = LoggerFactory.getLogger(RmsserviceApp.class);
