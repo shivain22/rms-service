@@ -6,12 +6,14 @@
 SPRING_PROFILES_ACTIVE=dev,api-docs
 
 # Keycloak OAuth2 Configuration
-SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=https://rmsauth.atparui.com/realms/jhipster
-SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
-SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
+KEYCLOAK_BASE_URL=https://rmsauth.atparui.com
+SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=https://rmsauth.atparui.com/realms/rms-service
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=rms-service-web
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=
 
 # Gateway Configuration (Multi-tenant)
-MULTI_TENANT_GATEWAY_BASE_URL=http://localhost:8082
+GATEWAY_BASE_URL=https://rmsgw.atparui.com
+MULTI_TENANT_GATEWAY_BASE_URL=https://rmsgw.atparui.com
 
 # Consul Service Discovery (if using Consul)
 SPRING_CLOUD_CONSUL_HOST=localhost
@@ -20,13 +22,17 @@ SPRING_CLOUD_CONSUL_PORT=8500
 # Server Configuration
 SERVER_PORT=8083
 
-# Database Configuration (if needed - adjust based on your local setup)
-SPRING_R2DBC_URL=r2dbc:postgresql://localhost:5432/rmsservice
+# Database Configuration
+# Database: rmsservice
+# Schema: rms-service
+# User/Role: rmsservice
+DB_PASSWORD=
+SPRING_R2DBC_URL=r2dbc:postgresql://localhost:5432/rmsservice?options=--search_path%3Drms-service
 SPRING_R2DBC_USERNAME=rmsservice
-SPRING_R2DBC_PASSWORD=
-SPRING_LIQUIBASE_URL=jdbc:postgresql://localhost:5432/rmsservice
+SPRING_R2DBC_PASSWORD=${DB_PASSWORD:}
+SPRING_LIQUIBASE_URL=jdbc:postgresql://localhost:5432/rmsservice?currentSchema=rms-service
 SPRING_LIQUIBASE_USER=rmsservice
-SPRING_LIQUIBASE_PASSWORD=
+SPRING_LIQUIBASE_PASSWORD=${DB_PASSWORD:}
 
 # Elasticsearch (if needed)
 SPRING_ELASTICSEARCH_URIS=http://localhost:9200

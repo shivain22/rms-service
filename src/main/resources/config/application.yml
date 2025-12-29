@@ -134,7 +134,7 @@ spring:
           group: rmsservice
   docker:
     compose:
-      enabled: true
+      enabled: false # Disabled - PostgreSQL and Consul are already running
       lifecycle-management: start-only
       file: src/main/docker/postgresql.yml
   profiles:
@@ -163,10 +163,10 @@ spring:
         provider:
           oidc:
             # Default issuer URI (fallback). Dynamic decoder will use issuer from token.
-            issuer-uri: ${KEYCLOAK_BASE_URL:https://rmsauth.atparui.com}/realms/gateway
+            issuer-uri: ${KEYCLOAK_BASE_URL:https://rmsauth.atparui.com}/realms/rms-service
         registration:
           oidc:
-            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID:rms-service}
+            client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID:rms-service-web}
             client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET:}
             scope: openid, profile, email, offline_access # last one for refresh tokens
   task:
@@ -254,7 +254,7 @@ multi-tenant:
   tenant-id-header: X-Tenant-ID
   jwt-tenant-claim: tenant_id
   gateway:
-    base-url: http://localhost:8080
+    base-url: ${GATEWAY_BASE_URL:https://rmsgw.atparui.com}
     tenant-config-endpoint: /api/tenants/{tenantId}/database-config
     connection-timeout: 5000
     read-timeout: 10000
@@ -265,6 +265,11 @@ multi-tenant:
     connection-timeout: 30000
     validation-query: SELECT 1
   fallback:
-    enabled: false
+    enabled: true
     default-tenant-id: default
+  default-tenant:
+    tenant-id: default
+    subdomain: rms.atparui.com
+    gateway-ui-url: https://rms.atparui.com
+    gateway-backend-url: https://rmsgw.atparui.com
 # application:

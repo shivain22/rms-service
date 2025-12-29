@@ -28,17 +28,21 @@ public class TenantAwareConnectionFactory implements ConnectionFactory {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Publisher<? extends Connection> create() {
-        return Mono.from(connectionFactoryProvider.getConnectionFactory())
+        Mono<Connection> connectionMono = Mono.from(connectionFactoryProvider.getConnectionFactory())
             .switchIfEmpty(Mono.just(defaultConnectionFactory))
             .flatMap(factory -> {
                 LOG.debug("Creating connection using tenant-specific factory");
-                return Mono.from(factory.create());
+                Publisher<? extends Connection> publisher = factory.create();
+                return (Mono<Connection>) Mono.from(publisher);
             })
             .onErrorResume(error -> {
                 LOG.error("Error creating tenant-specific connection, falling back to default: {}", error.getMessage());
-                return Mono.from(defaultConnectionFactory.create());
+                Publisher<? extends Connection> fallbackPublisher = defaultConnectionFactory.create();
+                return (Mono<Connection>) Mono.from(fallbackPublisher);
             });
+        return connectionMono;
     }
 
     @Override

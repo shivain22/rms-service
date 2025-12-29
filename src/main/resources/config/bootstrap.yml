@@ -30,6 +30,6 @@ spring:
       port: 8500
   docker:
     compose:
-      enabled: true
+      enabled: false # Disabled - PostgreSQL and Consul are already running
       lifecycle-management: start-only
       file: src/main/docker/postgresql.yml

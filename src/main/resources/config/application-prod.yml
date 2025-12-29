@@ -48,11 +48,14 @@ spring:
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: prod
-    url: jdbc:postgresql://localhost:5432/rmsservice
+    url: jdbc:postgresql://localhost:5432/rmsservice?currentSchema=rms-service
+    default-schema: rms-service
+    user: rmsservice
+    password: ${DB_PASSWORD:}
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/rmsservice
+    url: r2dbc:postgresql://localhost:5432/rmsservice?options=--search_path%3Drms-service
     username: rmsservice
-    password:
+    password: ${DB_PASSWORD:}
   thymeleaf:
     cache: true
 
