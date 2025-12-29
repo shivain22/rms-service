@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
 import org.javers.spring.boot.sql.JaversSqlAutoConfiguration;
 import org.slf4j.Logger;
@@ -71,6 +72,8 @@ public class RmsserviceApp {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
         SpringApplication app = new SpringApplication(RmsserviceApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
