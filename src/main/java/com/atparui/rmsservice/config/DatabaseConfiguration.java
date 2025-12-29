@@ -9,8 +9,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -49,44 +47,9 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    public R2dbcDialect dialect(BeanFactory beanFactory) {
-        // Get the default (non-primary) ConnectionFactory to avoid circular dependency
-        // with tenantAwareConnectionFactory. We need to find the auto-configured one.
-        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
-        String[] beanNames = listableBeanFactory.getBeanNamesForType(ConnectionFactory.class);
-
-        ConnectionFactory connectionFactory = null;
-        // Try to get a ConnectionFactory that's not the primary tenant-aware one
-        // This avoids circular dependency during bean initialization
-        for (String beanName : beanNames) {
-            if (!beanName.equals("tenantAwareConnectionFactory")) {
-                try {
-                    connectionFactory = beanFactory.getBean(beanName, ConnectionFactory.class);
-                    break;
-                } catch (Exception e) {
-                    // Bean might be in creation, skip it and try next
-                    continue;
-                }
-            }
-        }
-
-        // If we couldn't find a non-primary one, fall back to any available
-        if (connectionFactory == null && beanNames.length > 0) {
-            for (String beanName : beanNames) {
-                try {
-                    connectionFactory = beanFactory.getBean(beanName, ConnectionFactory.class);
-                    break;
-                } catch (Exception e) {
-                    // Skip beans that are currently being created
-                    continue;
-                }
-            }
-        }
-
-        if (connectionFactory == null) {
-            throw new IllegalStateException("No ConnectionFactory bean found");
-        }
-
+    public R2dbcDialect dialect(ConnectionFactory connectionFactory) {
+        // Use the injected ConnectionFactory (which will be the primary tenant-aware one if multi-tenancy is enabled).
+        // Since TenantAwareConnectionFactory now caches metadata to avoid recursion, this is safe.
         return DialectResolver.getDialect(connectionFactory);
     }
 
