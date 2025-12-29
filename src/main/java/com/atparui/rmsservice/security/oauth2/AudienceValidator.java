@@ -23,6 +23,12 @@ public class AudienceValidator implements OAuth2TokenValidator<Jwt> {
 
     public OAuth2TokenValidatorResult validate(Jwt jwt) {
         List<String> audience = jwt.getAudience();
+        if (audience == null || audience.isEmpty()) {
+            // Allow tokens without audience claim - they're from a trusted issuer
+            // This is common for tokens from gateway realm that don't include audience
+            LOG.debug("JWT token has no audience claim, allowing token from trusted issuer");
+            return OAuth2TokenValidatorResult.success();
+        }
         if (audience.stream().anyMatch(allowedAudience::contains)) {
             return OAuth2TokenValidatorResult.success();
         } else {

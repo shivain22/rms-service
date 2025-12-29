@@ -91,6 +91,7 @@ public class TenantContextFilter implements WebFilter {
         return (
             path.startsWith("/management/health") ||
             path.startsWith("/management/info") ||
+            path.startsWith("/management/jhiopenapigroups") ||
             path.startsWith("/api/authenticate") ||
             path.startsWith("/api/auth-info") ||
             path.startsWith("/v3/api-docs") ||

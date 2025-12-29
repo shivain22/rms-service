@@ -110,7 +110,7 @@ spring:
   cloud:
     consul:
       discovery:
-        healthCheckPath: /management/health
+        healthCheckPath: /management/health/readiness
         instanceId: rmsservice:${spring.application.instance-id:${random.value}}
         service-name: rmsservice
       config:

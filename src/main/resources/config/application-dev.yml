@@ -45,6 +45,8 @@ spring:
   jackson:
     serialization:
       indent-output: true
+  jmx:
+    enabled: false
   cloud:
     consul:
       config:
@@ -52,7 +54,9 @@ spring:
         format: yaml
         profile-separator: '-'
       discovery:
-        prefer-ip-address: true
+        healthCheckPath: /management/health/readiness
+        prefer-ip-address: false
+        hostname: host.docker.internal
         tags:
           - profile=${spring.profiles.active}
           - version='@project.version@'
@@ -64,8 +68,7 @@ spring:
       enabled: true
       health:
         enabled: true
-        path: /management/health
-        roles: 'ROLE_ADMIN'
+        path: /management/health/readiness
         probes:
           enabled: true
         group:
