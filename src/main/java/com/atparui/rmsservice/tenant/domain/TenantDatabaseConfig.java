@@ -31,11 +31,14 @@ public class TenantDatabaseConfig implements Serializable {
     @JsonProperty("validationQuery")
     private String validationQuery = "SELECT 1";
 
-    @JsonProperty("rmsServiceClientId")
-    private String rmsServiceClientId;
+    @JsonProperty("clients")
+    private java.util.List<TenantClientConfig> clients;
 
-    @JsonProperty("rmsServiceClientSecret")
-    private String rmsServiceClientSecret;
+    @JsonProperty("keycloakBaseUrl")
+    private String keycloakBaseUrl;
+
+    @JsonProperty("realmName")
+    private String realmName;
 
     public TenantDatabaseConfig() {}
 
@@ -95,20 +98,99 @@ public class TenantDatabaseConfig implements Serializable {
         this.validationQuery = validationQuery;
     }
 
-    public String getRmsServiceClientId() {
-        return rmsServiceClientId;
+    public java.util.List<TenantClientConfig> getClients() {
+        return clients;
     }
 
-    public void setRmsServiceClientId(String rmsServiceClientId) {
-        this.rmsServiceClientId = rmsServiceClientId;
+    public void setClients(java.util.List<TenantClientConfig> clients) {
+        this.clients = clients;
     }
 
-    public String getRmsServiceClientSecret() {
-        return rmsServiceClientSecret;
+    public String getKeycloakBaseUrl() {
+        return keycloakBaseUrl;
     }
 
-    public void setRmsServiceClientSecret(String rmsServiceClientSecret) {
-        this.rmsServiceClientSecret = rmsServiceClientSecret;
+    public void setKeycloakBaseUrl(String keycloakBaseUrl) {
+        this.keycloakBaseUrl = keycloakBaseUrl;
+    }
+
+    public String getRealmName() {
+        return realmName;
+    }
+
+    public void setRealmName(String realmName) {
+        this.realmName = realmName;
+    }
+
+    /**
+     * Get the issuer URI for this tenant's realm.
+     * Format: {keycloakBaseUrl}/realms/{realmName}
+     */
+    public String getIssuerUri() {
+        if (keycloakBaseUrl == null || realmName == null) {
+            return null;
+        }
+        String baseUrl = keycloakBaseUrl.endsWith("/") ? keycloakBaseUrl.substring(0, keycloakBaseUrl.length() - 1) : keycloakBaseUrl;
+        return baseUrl + "/realms/" + realmName;
+    }
+
+    /**
+     * Get client configuration by client type (web or mobile).
+     */
+    public TenantClientConfig getClientByType(String clientType) {
+        if (clients == null || clientType == null) {
+            return null;
+        }
+        return clients.stream().filter(client -> clientType.equalsIgnoreCase(client.getClientType())).findFirst().orElse(null);
+    }
+
+    /**
+     * Inner class for tenant client configuration.
+     */
+    public static class TenantClientConfig implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("clientId")
+        private String clientId;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("clientSecret")
+        private String clientSecret;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("clientType")
+        private String clientType;
+
+        public TenantClientConfig() {}
+
+        public TenantClientConfig(String clientId, String clientSecret, String clientType) {
+            this.clientId = clientId;
+            this.clientSecret = clientSecret;
+            this.clientType = clientType;
+        }
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        public void setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
+        }
+
+        public String getClientType() {
+            return clientType;
+        }
+
+        public void setClientType(String clientType) {
+            this.clientType = clientType;
+        }
     }
 
     @Override
@@ -128,6 +210,15 @@ public class TenantDatabaseConfig implements Serializable {
             maxPoolSize +
             ", connectionTimeout=" +
             connectionTimeout +
+            ", keycloakBaseUrl='" +
+            keycloakBaseUrl +
+            '\'' +
+            ", realmName='" +
+            realmName +
+            '\'' +
+            ", issuerUri='" +
+            getIssuerUri() +
+            '\'' +
             '}'
         );
     }
