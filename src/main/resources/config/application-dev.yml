@@ -62,16 +62,18 @@ spring:
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev, faker
-    url: jdbc:postgresql://localhost:5432/rmsservice?currentSchema=rms-service
+    url: jdbc:postgresql://localhost:5432/rms-service?currentSchema=rms-service&ssl=false&sslmode=disable&TimeZone=UTC
     default-schema: rms-service
-    user: rmsservice
-    password: ${DB_PASSWORD:}
+    user: rms-service
+    # Use DB_PASSWORD environment variable if set, otherwise default to 'rms-service' for local development
+    password: ${DB_PASSWORD:rms-service}
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/rmsservice?options=--search_path%3Drms-service
-    username: rmsservice
-    password: ${DB_PASSWORD:}
+    url: r2dbc:postgresql://localhost:5432/rms-service?options=--search_path%3Drms-service
+    username: rms-service
+    # Use DB_PASSWORD environment variable if set, otherwise default to 'rms-service' for local development
+    password: ${DB_PASSWORD:rms-service}
   thymeleaf:
     cache: false
 

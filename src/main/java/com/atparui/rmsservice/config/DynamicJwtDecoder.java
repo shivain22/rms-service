@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
@@ -17,6 +18,7 @@ import reactor.core.publisher.Mono;
  * This allows the service to validate tokens from multiple tenant realms dynamically.
  */
 @Component
+@Primary
 public class DynamicJwtDecoder implements ReactiveJwtDecoder {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicJwtDecoder.class);

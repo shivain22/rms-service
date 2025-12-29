@@ -13,6 +13,7 @@ import org.javers.core.metamodel.object.CdoSnapshot;
 import org.javers.repository.jql.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,9 +33,11 @@ import tech.jhipster.web.util.PaginationUtil;
 
 /**
  * REST controller for getting the audit events for entity
+ * Only enabled when Javers is available (requires JPA, so disabled for R2DBC)
  */
 @RestController
 @RequestMapping("/api")
+@ConditionalOnBean(Javers.class)
 public class JaversEntityAuditResource {
 
     private final Logger log = LoggerFactory.getLogger(JaversEntityAuditResource.class);

@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,6 +20,8 @@ import org.springframework.context.annotation.Primary;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "multi-tenant", name = "enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnBean(ConnectionFactory.class)
+@AutoConfigureAfter(R2dbcAutoConfiguration.class)
 public class TenantAwareDatabaseConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(TenantAwareDatabaseConfiguration.class);
@@ -25,8 +30,8 @@ public class TenantAwareDatabaseConfiguration {
     private final BeanFactory beanFactory;
 
     /**
-     * Constructor that receives the BeanFactory to look up the auto-configured ConnectionFactory.
-     * We need to explicitly find the non-primary ConnectionFactory to avoid circular dependency.
+     * Constructor that receives BeanFactory to look up the auto-configured ConnectionFactory.
+     * We use BeanFactory to avoid circular dependency issues.
      */
     public TenantAwareDatabaseConfiguration(TenantConnectionFactoryProvider connectionFactoryProvider, BeanFactory beanFactory) {
         this.connectionFactoryProvider = connectionFactoryProvider;
@@ -37,6 +42,8 @@ public class TenantAwareDatabaseConfiguration {
     /**
      * Provides a tenant-aware ConnectionFactory as the primary bean.
      * This will be used by all R2DBC repositories.
+     * Note: We don't use @DependsOn because the auto-configured ConnectionFactory
+     * bean name may vary. Instead, we handle the lookup with proper error handling.
      */
     @Bean
     @Primary
@@ -51,19 +58,26 @@ public class TenantAwareDatabaseConfiguration {
 
     /**
      * Gets the default (auto-configured) ConnectionFactory, excluding the tenant-aware one.
-     * This avoids circular dependencies during bean initialization.
+     * This method looks up ConnectionFactory beans by name to find the auto-configured one.
      */
     private ConnectionFactory getDefaultConnectionFactory() {
         ListableBeanFactory listableBeanFactory = (ListableBeanFactory) beanFactory;
         String[] beanNames = listableBeanFactory.getBeanNamesForType(ConnectionFactory.class);
 
+        LOG.debug("Found {} ConnectionFactory bean(s): {}", beanNames.length, String.join(", ", beanNames));
+
         // Find the ConnectionFactory that's not the tenant-aware one
+        // Spring Boot auto-configuration typically creates a bean with a specific name
+        // or we can find it by excluding our tenant-aware bean
         for (String beanName : beanNames) {
             if (!beanName.equals("tenantAwareConnectionFactory")) {
                 try {
                     ConnectionFactory factory = beanFactory.getBean(beanName, ConnectionFactory.class);
-                    LOG.debug("Using default ConnectionFactory bean: {}", beanName);
-                    return factory;
+                    // Double-check it's not a TenantAwareConnectionFactory (shouldn't happen, but be safe)
+                    if (!(factory instanceof TenantAwareConnectionFactory)) {
+                        LOG.debug("Using default ConnectionFactory bean: {}", beanName);
+                        return factory;
+                    }
                 } catch (Exception e) {
                     // Bean might be in creation, skip it and try next
                     LOG.debug("Skipping bean {} due to creation state: {}", beanName, e.getMessage());
@@ -72,6 +86,13 @@ public class TenantAwareDatabaseConfiguration {
             }
         }
 
-        throw new IllegalStateException("Could not find default ConnectionFactory. " + "Make sure R2DBC auto-configuration is enabled.");
+        // If we couldn't find a non-primary one, it means the auto-configured ConnectionFactory
+        // hasn't been created yet. This can happen if there's a configuration issue.
+        throw new IllegalStateException(
+            "Could not find default ConnectionFactory. " +
+            "Make sure R2DBC auto-configuration is enabled and the ConnectionFactory bean is created before " +
+            "tenantAwareConnectionFactory. Found bean names: " +
+            String.join(", ", beanNames)
+        );
     }
 }

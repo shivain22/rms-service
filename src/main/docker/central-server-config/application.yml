@@ -2,6 +2,12 @@ configserver:
   name: Docker Consul Service
   status: Connected to Consul Server running in Docker
 
+spring:
+  liquibase:
+    password: rms-service
+  r2dbc:
+    password: rms-service
+
 jhipster:
   security:
     authentication:

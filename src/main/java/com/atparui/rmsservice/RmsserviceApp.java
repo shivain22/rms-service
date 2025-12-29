@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
+import org.javers.spring.boot.sql.JaversSqlAutoConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -22,7 +23,9 @@ import org.springframework.core.env.Environment;
 import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class })
+@SpringBootApplication(
+    exclude = { DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class, JaversSqlAutoConfiguration.class }
+)
 @EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class, MultiTenantProperties.class })
 public class RmsserviceApp {
 

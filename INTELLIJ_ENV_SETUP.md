@@ -120,12 +120,12 @@ In IntelliJ Run Configuration > Environment Variables, add each variable:
 If you need to configure database, Elasticsearch, or Kafka locally, add these:
 
 ```
-SPRING_R2DBC_URL=r2dbc:postgresql://localhost:5432/rmsservice
-SPRING_R2DBC_USERNAME=rmsservice
-SPRING_R2DBC_PASSWORD=
-SPRING_LIQUIBASE_URL=jdbc:postgresql://localhost:5432/rmsservice
-SPRING_LIQUIBASE_USER=rmsservice
-SPRING_LIQUIBASE_PASSWORD=
+SPRING_R2DBC_URL=r2dbc:postgresql://localhost:5432/rmsservice?options=--search_path%3Drms-service
+SPRING_R2DBC_USERNAME=rms-service
+SPRING_R2DBC_PASSWORD=rms-service
+SPRING_LIQUIBASE_URL=jdbc:postgresql://localhost:5432/rmsservice?currentSchema=rms-service&TimeZone=UTC
+SPRING_LIQUIBASE_USER=rms-service
+SPRING_LIQUIBASE_PASSWORD=rms-service
 SPRING_ELASTICSEARCH_URIS=http://localhost:9200
 SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=localhost:9092
 ```

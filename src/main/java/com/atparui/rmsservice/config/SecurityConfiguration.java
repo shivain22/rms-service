@@ -22,7 +22,6 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter;
@@ -39,11 +38,9 @@ import tech.jhipster.config.JHipsterProperties;
 public class SecurityConfiguration {
 
     private final JHipsterProperties jHipsterProperties;
-    private final DynamicJwtDecoder dynamicJwtDecoder;
 
-    public SecurityConfiguration(JHipsterProperties jHipsterProperties, DynamicJwtDecoder dynamicJwtDecoder) {
+    public SecurityConfiguration(JHipsterProperties jHipsterProperties) {
         this.jHipsterProperties = jHipsterProperties;
-        this.dynamicJwtDecoder = dynamicJwtDecoder;
     }
 
     @Bean
@@ -133,10 +130,6 @@ public class SecurityConfiguration {
                 });
         };
     }
-
-    @Bean
-    ReactiveJwtDecoder jwtDecoder() {
-        // Use dynamic JWT decoder that can validate tokens from multiple tenant realms
-        return dynamicJwtDecoder;
-    }
+    // Note: jwtDecoder bean is provided by DynamicJwtDecoder (@Component @Primary)
+    // No need to define it here to avoid duplicate bean definition
 }
