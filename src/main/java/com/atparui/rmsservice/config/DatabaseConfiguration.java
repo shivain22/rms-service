@@ -11,6 +11,7 @@ import java.util.BitSet;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
@@ -47,7 +48,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    public R2dbcDialect dialect(ConnectionFactory connectionFactory) {
+    public R2dbcDialect dialect(@Lazy ConnectionFactory connectionFactory) {
         return DialectResolver.getDialect(connectionFactory);
     }
 
