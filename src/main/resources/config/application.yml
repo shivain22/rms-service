@@ -51,6 +51,9 @@ management:
           - prometheus
           - threaddump
           - liquibase
+    jmx:
+      exposure:
+        exclude: '*'
   endpoint:
     health:
       show-details: when_authorized
