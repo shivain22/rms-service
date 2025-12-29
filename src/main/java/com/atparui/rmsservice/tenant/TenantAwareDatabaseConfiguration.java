@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 
 /**
@@ -24,10 +25,11 @@ public class TenantAwareDatabaseConfiguration {
 
     /**
      * Constructor that receives the auto-configured ConnectionFactory from R2dbcAutoConfiguration.
+     * Uses @Lazy to break circular dependency with tenantAwareConnectionFactory bean.
      */
     public TenantAwareDatabaseConfiguration(
         TenantConnectionFactoryProvider connectionFactoryProvider,
-        ConnectionFactory connectionFactory
+        @Lazy ConnectionFactory connectionFactory
     ) {
         this.connectionFactoryProvider = connectionFactoryProvider;
         this.defaultConnectionFactory = connectionFactory;
