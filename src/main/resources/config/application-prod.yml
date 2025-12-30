@@ -56,6 +56,8 @@ spring:
     url: ${SPRING_LIQUIBASE_URL:jdbc:postgresql://rms-postgresql:5432/rms_service?currentSchema=public}
     user: ${SPRING_LIQUIBASE_USER:rms_service}
     password: ${SPRING_LIQUIBASE_PASSWORD:rms_service}
+    # Explicitly set default schema name for Liquibase (required even for separate database)
+    default-schema-name: ${SPRING_LIQUIBASE_DEFAULT_SCHEMA:public}
   r2dbc:
     # url, username, password should be set via environment variables (SPRING_R2DBC_URL, SPRING_R2DBC_USERNAME, SPRING_R2DBC_PASSWORD)
     # Service uses separate database 'rms_service' (not a schema)
