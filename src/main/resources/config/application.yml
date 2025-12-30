@@ -116,6 +116,10 @@ spring:
       config:
         watch:
           enabled: false
+      # host and port should be set via environment variables (SPRING_CLOUD_CONSUL_HOST, SPRING_CLOUD_CONSUL_PORT)
+      # Default values for local development (overridden by env vars in Docker)
+      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
     function:
       definition: kafkaConsumer;kafkaProducer
     stream:
@@ -140,6 +144,10 @@ spring:
       enabled: false # Disabled - PostgreSQL and Consul are already running
       lifecycle-management: start-only
       file: src/main/docker/postgresql.yml
+  elasticsearch:
+    # uris should be set via environment variable (SPRING_ELASTICSEARCH_URIS)
+    # Default value for local development (overridden by env vars in Docker)
+    uris: ${SPRING_ELASTICSEARCH_URIS:http://localhost:9200}
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file
