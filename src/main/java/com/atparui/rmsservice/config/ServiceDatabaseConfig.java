@@ -1,0 +1,98 @@
+package com.atparui.rmsservice.config;
+
+import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
+import io.r2dbc.postgresql.PostgresqlConnectionFactory;
+import io.r2dbc.spi.ConnectionFactory;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
+import org.springframework.r2dbc.connection.R2dbcTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+/**
+ * Database configuration for Service.
+ * Creates a @Primary ConnectionFactory bean that uses the correct Docker service name (rms-postgresql).
+ * This ensures the health check and all R2DBC operations use the correct database connection.
+ */
+@Configuration
+@Order(org.springframework.core.Ordered.HIGHEST_PRECEDENCE)
+@EnableR2dbcRepositories(basePackages = "com.atparui.rmsservice.repository")
+@EnableTransactionManagement
+public class ServiceDatabaseConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(ServiceDatabaseConfig.class);
+
+    @Value("${DB_HOST:rms-postgresql}")
+    private String dbHost;
+
+    @Value("${DB_PORT:5432}")
+    private int dbPort;
+
+    @Value("${DB_USERNAME:rms_service}")
+    private String dbUsername;
+
+    @Value("${DB_PASSWORD:rms_service}")
+    private String dbPassword;
+
+    @Value("${DB_NAME:rms_service}")
+    private String dbName;
+
+    @PostConstruct
+    public void initializeDatabaseConnection() {
+        log.info("=== ServiceDatabaseConfig Initialization ===");
+        log.info("DB_HOST from @Value: {}", dbHost);
+        log.info("DB_HOST from environment: {}", System.getenv("DB_HOST"));
+        log.info("DB_PORT: {}", dbPort);
+        log.info("DB_NAME: {}", dbName);
+        log.info("DB_USERNAME: {}", dbUsername);
+        log.info("Initialized database connection to: {} at {}:{}", dbName, dbHost, dbPort);
+        log.info("================================================");
+    }
+
+    /**
+     * Creates the primary ConnectionFactory bean for Service.
+     * This bean is marked @Primary to ensure it's used by health indicators and all R2DBC operations.
+     */
+    @Bean(name = "connectionFactory")
+    @Primary
+    public ConnectionFactory connectionFactory() {
+        log.info("=== Creating PRIMARY ConnectionFactory for Service ===");
+        log.info("Database: {} at {}:{}", dbName, dbHost, dbPort);
+        log.info("DB_HOST from @Value: {}", dbHost);
+        log.info("DB_HOST from environment: {}", System.getenv("DB_HOST"));
+        log.info("DB_USERNAME: {}", dbUsername);
+
+        if ("localhost".equals(dbHost) || "127.0.0.1".equals(dbHost)) {
+            log.error("WARNING: DB_HOST is set to localhost! This will fail in Docker. Expected: rms-postgresql");
+        }
+
+        ConnectionFactory factory = new PostgresqlConnectionFactory(
+            PostgresqlConnectionConfiguration.builder()
+                .host(dbHost)
+                .port(dbPort)
+                .database(dbName)
+                .username(dbUsername)
+                .password(dbPassword)
+                .build()
+        );
+
+        log.info("ConnectionFactory created successfully for host: {}", dbHost);
+        log.info("==========================================");
+        return factory;
+    }
+
+    /**
+     * Creates the transaction manager for R2DBC.
+     */
+    @Bean
+    @Primary
+    public R2dbcTransactionManager transactionManager() {
+        return new R2dbcTransactionManager(connectionFactory());
+    }
+}
