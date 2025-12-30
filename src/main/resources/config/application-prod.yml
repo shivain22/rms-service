@@ -57,9 +57,6 @@ spring:
     url: ${SPRING_LIQUIBASE_URL:jdbc:postgresql://localhost:5432/rms-service?TimeZone=UTC}
     user: ${SPRING_LIQUIBASE_USER:rms-service}
     password: ${SPRING_LIQUIBASE_PASSWORD:${DB_PASSWORD:}}
-    # default-schema-name should be set via environment variable (SPRING_LIQUIBASE_DEFAULT_SCHEMA)
-    # This is required when using schema-specific connections
-    default-schema-name: ${SPRING_LIQUIBASE_DEFAULT_SCHEMA:rms_service}
   r2dbc:
     # url, username, password should be set via environment variables (SPRING_R2DBC_URL, SPRING_R2DBC_USERNAME, SPRING_R2DBC_PASSWORD)
     # Default values for local development (overridden by env vars in Docker)
