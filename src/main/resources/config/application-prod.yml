@@ -53,16 +53,18 @@ spring:
   liquibase:
     contexts: prod
     # url should be set via environment variable (SPRING_LIQUIBASE_URL)
+    # Service uses separate database 'rms_service' with default 'public' schema
     # Default value for local development (overridden by env vars in Docker)
-    url: ${SPRING_LIQUIBASE_URL:jdbc:postgresql://localhost:5432/rms-service?TimeZone=UTC}
-    user: ${SPRING_LIQUIBASE_USER:rms-service}
-    password: ${SPRING_LIQUIBASE_PASSWORD:${DB_PASSWORD:}}
+    url: ${SPRING_LIQUIBASE_URL:jdbc:postgresql://rms-postgresql:5432/rms_service?currentSchema=public}
+    user: ${SPRING_LIQUIBASE_USER:rms_service}
+    password: ${SPRING_LIQUIBASE_PASSWORD:rms_service}
   r2dbc:
     # url, username, password should be set via environment variables (SPRING_R2DBC_URL, SPRING_R2DBC_USERNAME, SPRING_R2DBC_PASSWORD)
+    # Service uses separate database 'rms_service' (not a schema)
     # Default values for local development (overridden by env vars in Docker)
-    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://localhost:5432/rms-service}
-    username: ${SPRING_R2DBC_USERNAME:rms-service}
-    password: ${SPRING_R2DBC_PASSWORD:${DB_PASSWORD:}}
+    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://rms-postgresql:5432/rms_service}
+    username: ${SPRING_R2DBC_USERNAME:rms_service}
+    password: ${SPRING_R2DBC_PASSWORD:rms_service}
   thymeleaf:
     cache: true
 
