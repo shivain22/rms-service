@@ -57,7 +57,7 @@ public class ServiceDatabaseConfig {
 
     /**
      * Creates the primary ConnectionFactory bean for Service.
-     * This bean is marked @Primary to ensure it's used by health indicators and all R2DBC operations.
+     * This bean is marked @Primary to ensure it's used by application logic.
      */
     @Bean(name = "connectionFactory")
     @Primary
@@ -83,6 +83,36 @@ public class ServiceDatabaseConfig {
         );
 
         log.info("ConnectionFactory created successfully for host: {}", dbHost);
+        log.info("==========================================");
+        return factory;
+    }
+
+    /**
+     * Dedicated ConnectionFactory for health checks.
+     * This ensures the health indicator always uses the correct database connection
+     * (rms-postgresql) instead of falling back to localhost.
+     */
+    @Bean(name = "healthCheckConnectionFactory")
+    public ConnectionFactory healthCheckConnectionFactory() {
+        log.info("=== Creating Health Check ConnectionFactory for Service ===");
+        log.info("Database: {} at {}:{}", dbName, dbHost, dbPort);
+        log.info("DB_HOST: {}", dbHost);
+
+        if ("localhost".equals(dbHost) || "127.0.0.1".equals(dbHost)) {
+            log.error("ERROR: DB_HOST is set to localhost! This will fail in Docker. Expected: rms-postgresql");
+        }
+
+        ConnectionFactory factory = new PostgresqlConnectionFactory(
+            PostgresqlConnectionConfiguration.builder()
+                .host(dbHost)
+                .port(dbPort)
+                .database(dbName)
+                .username(dbUsername)
+                .password(dbPassword)
+                .build()
+        );
+
+        log.info("Health check ConnectionFactory created successfully for host: {}", dbHost);
         log.info("==========================================");
         return factory;
     }
