@@ -25,13 +25,13 @@ public interface OrderItemRepository extends ReactiveCrudRepository<OrderItem, U
     Flux<OrderItem> findByMenuItem(UUID id);
 
     @Query("SELECT * FROM order_item entity WHERE entity.menu_item_id IS NULL")
-    Flux<OrderItem> findAllWhereMenuItemIsNull();
+    Flux<OrderItem> findAllByMenuItemIsNull();
 
     @Query("SELECT * FROM order_item entity WHERE entity.menu_item_variant_id = :id")
     Flux<OrderItem> findByMenuItemVariant(UUID id);
 
     @Query("SELECT * FROM order_item entity WHERE entity.menu_item_variant_id IS NULL")
-    Flux<OrderItem> findAllWhereMenuItemVariantIsNull();
+    Flux<OrderItem> findAllByMenuItemVariantIsNull();
 
     @Override
     <S extends OrderItem> Mono<S> save(S entity);

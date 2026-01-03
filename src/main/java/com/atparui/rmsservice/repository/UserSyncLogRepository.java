@@ -19,7 +19,7 @@ public interface UserSyncLogRepository extends ReactiveCrudRepository<UserSyncLo
     Flux<UserSyncLog> findByUser(UUID id);
 
     @Query("SELECT * FROM user_sync_log entity WHERE entity.user_id IS NULL")
-    Flux<UserSyncLog> findAllWhereUserIsNull();
+    Flux<UserSyncLog> findAllByUserIsNull();
 
     @Override
     <S extends UserSyncLog> Mono<S> save(S entity);

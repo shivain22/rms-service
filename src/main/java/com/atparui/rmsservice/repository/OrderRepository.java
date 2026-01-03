@@ -21,25 +21,25 @@ public interface OrderRepository extends ReactiveCrudRepository<Order, UUID>, Or
     Flux<Order> findByBranch(UUID id);
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.branch_id IS NULL")
-    Flux<Order> findAllWhereBranchIsNull();
+    Flux<Order> findAllByBranchIsNull();
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.customer_id = :id")
     Flux<Order> findByCustomer(UUID id);
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.customer_id IS NULL")
-    Flux<Order> findAllWhereCustomerIsNull();
+    Flux<Order> findAllByCustomerIsNull();
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.user_id = :id")
     Flux<Order> findByUser(UUID id);
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.user_id IS NULL")
-    Flux<Order> findAllWhereUserIsNull();
+    Flux<Order> findAllByUserIsNull();
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.branch_table_id = :id")
     Flux<Order> findByBranchTable(UUID id);
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.branch_table_id IS NULL")
-    Flux<Order> findAllWhereBranchTableIsNull();
+    Flux<Order> findAllByBranchTableIsNull();
 
     @Query("SELECT * FROM jhi_order entity WHERE entity.branch_id = :branchId AND entity.status = :status")
     Flux<Order> findByBranchIdAndStatus(UUID branchId, String status);

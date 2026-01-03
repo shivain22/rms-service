@@ -19,13 +19,13 @@ public interface BillDiscountRepository extends ReactiveCrudRepository<BillDisco
     Flux<BillDiscount> findByBill(UUID id);
 
     @Query("SELECT * FROM bill_discount entity WHERE entity.bill_id IS NULL")
-    Flux<BillDiscount> findAllWhereBillIsNull();
+    Flux<BillDiscount> findAllByBillIsNull();
 
     @Query("SELECT * FROM bill_discount entity WHERE entity.discount_id = :id")
     Flux<BillDiscount> findByDiscount(UUID id);
 
     @Query("SELECT * FROM bill_discount entity WHERE entity.discount_id IS NULL")
-    Flux<BillDiscount> findAllWhereDiscountIsNull();
+    Flux<BillDiscount> findAllByDiscountIsNull();
 
     @Override
     <S extends BillDiscount> Mono<S> save(S entity);

@@ -21,13 +21,13 @@ public interface MenuItemRepository extends ReactiveCrudRepository<MenuItem, UUI
     Flux<MenuItem> findByBranch(UUID id);
 
     @Query("SELECT * FROM menu_item entity WHERE entity.branch_id IS NULL")
-    Flux<MenuItem> findAllWhereBranchIsNull();
+    Flux<MenuItem> findAllByBranchIsNull();
 
     @Query("SELECT * FROM menu_item entity WHERE entity.menu_category_id = :id")
     Flux<MenuItem> findByMenuCategory(UUID id);
 
     @Query("SELECT * FROM menu_item entity WHERE entity.menu_category_id IS NULL")
-    Flux<MenuItem> findAllWhereMenuCategoryIsNull();
+    Flux<MenuItem> findAllByMenuCategoryIsNull();
 
     @Query("SELECT * FROM menu_item entity WHERE entity.branch_id = :branchId AND entity.is_available = true")
     Flux<MenuItem> findAvailableByBranchId(UUID branchId);

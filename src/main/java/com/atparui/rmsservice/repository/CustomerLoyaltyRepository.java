@@ -19,13 +19,13 @@ public interface CustomerLoyaltyRepository extends ReactiveCrudRepository<Custom
     Flux<CustomerLoyalty> findByCustomer(UUID id);
 
     @Query("SELECT * FROM customer_loyalty entity WHERE entity.customer_id IS NULL")
-    Flux<CustomerLoyalty> findAllWhereCustomerIsNull();
+    Flux<CustomerLoyalty> findAllByCustomerIsNull();
 
     @Query("SELECT * FROM customer_loyalty entity WHERE entity.restaurant_id = :id")
     Flux<CustomerLoyalty> findByRestaurant(UUID id);
 
     @Query("SELECT * FROM customer_loyalty entity WHERE entity.restaurant_id IS NULL")
-    Flux<CustomerLoyalty> findAllWhereRestaurantIsNull();
+    Flux<CustomerLoyalty> findAllByRestaurantIsNull();
 
     @Override
     <S extends CustomerLoyalty> Mono<S> save(S entity);

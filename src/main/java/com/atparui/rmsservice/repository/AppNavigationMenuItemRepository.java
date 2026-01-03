@@ -22,7 +22,7 @@ public interface AppNavigationMenuItemRepository
     Flux<AppNavigationMenuItem> findByParentMenu(UUID id);
 
     @Query("SELECT * FROM app_navigation_menu_item entity WHERE entity.parent_menu_id IS NULL")
-    Flux<AppNavigationMenuItem> findAllWhereParentMenuIsNull();
+    Flux<AppNavigationMenuItem> findAllByParentMenuIsNull();
 
     @Override
     <S extends AppNavigationMenuItem> Mono<S> save(S entity);

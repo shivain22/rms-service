@@ -19,7 +19,7 @@ public interface TaxConfigRepository extends ReactiveCrudRepository<TaxConfig, U
     Flux<TaxConfig> findByRestaurant(UUID id);
 
     @Query("SELECT * FROM tax_config entity WHERE entity.restaurant_id IS NULL")
-    Flux<TaxConfig> findAllWhereRestaurantIsNull();
+    Flux<TaxConfig> findAllByRestaurantIsNull();
 
     @Override
     <S extends TaxConfig> Mono<S> save(S entity);

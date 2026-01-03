@@ -21,7 +21,7 @@ public interface BranchRepository extends ReactiveCrudRepository<Branch, UUID>, 
     Flux<Branch> findByRestaurant(UUID id);
 
     @Query("SELECT * FROM branch entity WHERE entity.restaurant_id IS NULL")
-    Flux<Branch> findAllWhereRestaurantIsNull();
+    Flux<Branch> findAllByRestaurantIsNull();
 
     @Override
     <S extends Branch> Mono<S> save(S entity);

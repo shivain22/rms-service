@@ -20,13 +20,13 @@ public interface TableWaiterAssignmentRepository
     Flux<TableWaiterAssignment> findByTableAssignment(UUID id);
 
     @Query("SELECT * FROM table_waiter_assignment entity WHERE entity.table_assignment_id IS NULL")
-    Flux<TableWaiterAssignment> findAllWhereTableAssignmentIsNull();
+    Flux<TableWaiterAssignment> findAllByTableAssignmentIsNull();
 
     @Query("SELECT * FROM table_waiter_assignment entity WHERE entity.waiter_id = :id")
     Flux<TableWaiterAssignment> findByWaiter(UUID id);
 
     @Query("SELECT * FROM table_waiter_assignment entity WHERE entity.waiter_id IS NULL")
-    Flux<TableWaiterAssignment> findAllWhereWaiterIsNull();
+    Flux<TableWaiterAssignment> findAllByWaiterIsNull();
 
     @Override
     <S extends TableWaiterAssignment> Mono<S> save(S entity);

@@ -19,13 +19,13 @@ public interface BillItemRepository extends ReactiveCrudRepository<BillItem, UUI
     Flux<BillItem> findByBill(UUID id);
 
     @Query("SELECT * FROM bill_item entity WHERE entity.bill_id IS NULL")
-    Flux<BillItem> findAllWhereBillIsNull();
+    Flux<BillItem> findAllByBillIsNull();
 
     @Query("SELECT * FROM bill_item entity WHERE entity.order_item_id = :id")
     Flux<BillItem> findByOrderItem(UUID id);
 
     @Query("SELECT * FROM bill_item entity WHERE entity.order_item_id IS NULL")
-    Flux<BillItem> findAllWhereOrderItemIsNull();
+    Flux<BillItem> findAllByOrderItemIsNull();
 
     @Override
     <S extends BillItem> Mono<S> save(S entity);

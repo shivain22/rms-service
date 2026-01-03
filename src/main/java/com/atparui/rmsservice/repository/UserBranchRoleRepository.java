@@ -21,13 +21,13 @@ public interface UserBranchRoleRepository extends ReactiveCrudRepository<UserBra
     Flux<UserBranchRole> findByUser(UUID id);
 
     @Query("SELECT * FROM user_branch_role entity WHERE entity.user_id IS NULL")
-    Flux<UserBranchRole> findAllWhereUserIsNull();
+    Flux<UserBranchRole> findAllByUserIsNull();
 
     @Query("SELECT * FROM user_branch_role entity WHERE entity.branch_id = :id")
     Flux<UserBranchRole> findByBranch(UUID id);
 
     @Query("SELECT * FROM user_branch_role entity WHERE entity.branch_id IS NULL")
-    Flux<UserBranchRole> findAllWhereBranchIsNull();
+    Flux<UserBranchRole> findAllByBranchIsNull();
 
     @Query("SELECT * FROM user_branch_role entity WHERE entity.branch_id = :branchId AND entity.role = :role AND entity.is_active = true")
     Flux<UserBranchRole> findByBranchIdAndRole(UUID branchId, String role);

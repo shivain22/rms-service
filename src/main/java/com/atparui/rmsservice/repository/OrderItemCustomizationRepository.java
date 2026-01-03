@@ -20,13 +20,13 @@ public interface OrderItemCustomizationRepository
     Flux<OrderItemCustomization> findByOrderItem(UUID id);
 
     @Query("SELECT * FROM order_item_customization entity WHERE entity.order_item_id IS NULL")
-    Flux<OrderItemCustomization> findAllWhereOrderItemIsNull();
+    Flux<OrderItemCustomization> findAllByOrderItemIsNull();
 
     @Query("SELECT * FROM order_item_customization entity WHERE entity.menu_item_addon_id = :id")
     Flux<OrderItemCustomization> findByMenuItemAddon(UUID id);
 
     @Query("SELECT * FROM order_item_customization entity WHERE entity.menu_item_addon_id IS NULL")
-    Flux<OrderItemCustomization> findAllWhereMenuItemAddonIsNull();
+    Flux<OrderItemCustomization> findAllByMenuItemAddonIsNull();
 
     @Override
     <S extends OrderItemCustomization> Mono<S> save(S entity);

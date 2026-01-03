@@ -19,13 +19,13 @@ public interface InventoryRepository extends ReactiveCrudRepository<Inventory, U
     Flux<Inventory> findByBranch(UUID id);
 
     @Query("SELECT * FROM inventory entity WHERE entity.branch_id IS NULL")
-    Flux<Inventory> findAllWhereBranchIsNull();
+    Flux<Inventory> findAllByBranchIsNull();
 
     @Query("SELECT * FROM inventory entity WHERE entity.menu_item_id = :id")
     Flux<Inventory> findByMenuItem(UUID id);
 
     @Query("SELECT * FROM inventory entity WHERE entity.menu_item_id IS NULL")
-    Flux<Inventory> findAllWhereMenuItemIsNull();
+    Flux<Inventory> findAllByMenuItemIsNull();
 
     @Query("SELECT * FROM inventory entity WHERE entity.branch_id = :branchId AND entity.current_stock < entity.minimum_stock")
     Flux<Inventory> findLowStockByBranchId(UUID branchId);

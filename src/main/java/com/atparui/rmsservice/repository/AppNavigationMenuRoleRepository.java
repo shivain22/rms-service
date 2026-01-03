@@ -22,13 +22,13 @@ public interface AppNavigationMenuRoleRepository
     Flux<AppNavigationMenuRole> findByAppNavigationMenu(UUID id);
 
     @Query("SELECT * FROM app_navigation_menu_role entity WHERE entity.app_navigation_menu_id IS NULL")
-    Flux<AppNavigationMenuRole> findAllWhereAppNavigationMenuIsNull();
+    Flux<AppNavigationMenuRole> findAllByAppNavigationMenuIsNull();
 
     @Query("SELECT * FROM app_navigation_menu_role entity WHERE entity.app_navigation_menu_item_id = :id")
     Flux<AppNavigationMenuRole> findByAppNavigationMenuItem(UUID id);
 
     @Query("SELECT * FROM app_navigation_menu_role entity WHERE entity.app_navigation_menu_item_id IS NULL")
-    Flux<AppNavigationMenuRole> findAllWhereAppNavigationMenuItemIsNull();
+    Flux<AppNavigationMenuRole> findAllByAppNavigationMenuItemIsNull();
 
     @Query("SELECT * FROM app_navigation_menu_role entity WHERE entity.role = :role AND entity.is_active = true")
     Flux<AppNavigationMenuRole> findByRole(String role);

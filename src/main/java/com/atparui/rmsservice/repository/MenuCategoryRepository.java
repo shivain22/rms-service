@@ -21,7 +21,7 @@ public interface MenuCategoryRepository extends ReactiveCrudRepository<MenuCateg
     Flux<MenuCategory> findByRestaurant(UUID id);
 
     @Query("SELECT * FROM menu_category entity WHERE entity.restaurant_id IS NULL")
-    Flux<MenuCategory> findAllWhereRestaurantIsNull();
+    Flux<MenuCategory> findAllByRestaurantIsNull();
 
     @Override
     <S extends MenuCategory> Mono<S> save(S entity);

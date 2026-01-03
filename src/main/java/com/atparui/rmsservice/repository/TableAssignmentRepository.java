@@ -19,19 +19,19 @@ public interface TableAssignmentRepository extends ReactiveCrudRepository<TableA
     Flux<TableAssignment> findByBranchTable(UUID id);
 
     @Query("SELECT * FROM table_assignment entity WHERE entity.branch_table_id IS NULL")
-    Flux<TableAssignment> findAllWhereBranchTableIsNull();
+    Flux<TableAssignment> findAllByBranchTableIsNull();
 
     @Query("SELECT * FROM table_assignment entity WHERE entity.shift_id = :id")
     Flux<TableAssignment> findByShift(UUID id);
 
     @Query("SELECT * FROM table_assignment entity WHERE entity.shift_id IS NULL")
-    Flux<TableAssignment> findAllWhereShiftIsNull();
+    Flux<TableAssignment> findAllByShiftIsNull();
 
     @Query("SELECT * FROM table_assignment entity WHERE entity.supervisor_id = :id")
     Flux<TableAssignment> findBySupervisor(UUID id);
 
     @Query("SELECT * FROM table_assignment entity WHERE entity.supervisor_id IS NULL")
-    Flux<TableAssignment> findAllWhereSupervisorIsNull();
+    Flux<TableAssignment> findAllBySupervisorIsNull();
 
     @Query("SELECT * FROM table_assignment entity WHERE entity.assignment_date = :date")
     Flux<TableAssignment> findByAssignmentDate(java.time.LocalDate date);

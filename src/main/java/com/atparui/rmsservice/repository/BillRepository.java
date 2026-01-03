@@ -27,13 +27,13 @@ public interface BillRepository extends ReactiveCrudRepository<Bill, UUID>, Bill
     Flux<Bill> findByBranch(UUID id);
 
     @Query("SELECT * FROM bill entity WHERE entity.branch_id IS NULL")
-    Flux<Bill> findAllWhereBranchIsNull();
+    Flux<Bill> findAllByBranchIsNull();
 
     @Query("SELECT * FROM bill entity WHERE entity.customer_id = :id")
     Flux<Bill> findByCustomer(UUID id);
 
     @Query("SELECT * FROM bill entity WHERE entity.customer_id IS NULL")
-    Flux<Bill> findAllWhereCustomerIsNull();
+    Flux<Bill> findAllByCustomerIsNull();
 
     @Query(
         "SELECT * FROM bill entity WHERE entity.branch_id = :branchId AND entity.bill_date >= :startDate AND entity.bill_date <= :endDate"

@@ -21,7 +21,7 @@ public interface CustomerRepository extends ReactiveCrudRepository<Customer, UUI
     Flux<Customer> findByUser(UUID id);
 
     @Query("SELECT * FROM customer entity WHERE entity.user_id IS NULL")
-    Flux<Customer> findAllWhereUserIsNull();
+    Flux<Customer> findAllByUserIsNull();
 
     @Override
     <S extends Customer> Mono<S> save(S entity);

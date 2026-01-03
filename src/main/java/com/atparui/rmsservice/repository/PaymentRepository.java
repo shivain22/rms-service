@@ -21,13 +21,13 @@ public interface PaymentRepository extends ReactiveCrudRepository<Payment, UUID>
     Flux<Payment> findByBill(UUID id);
 
     @Query("SELECT * FROM payment entity WHERE entity.bill_id IS NULL")
-    Flux<Payment> findAllWhereBillIsNull();
+    Flux<Payment> findAllByBillIsNull();
 
     @Query("SELECT * FROM payment entity WHERE entity.payment_method_id = :id")
     Flux<Payment> findByPaymentMethod(UUID id);
 
     @Query("SELECT * FROM payment entity WHERE entity.payment_method_id IS NULL")
-    Flux<Payment> findAllWherePaymentMethodIsNull();
+    Flux<Payment> findAllByPaymentMethodIsNull();
 
     @Query("SELECT * FROM payment entity WHERE entity.bill_id = :billId")
     Flux<Payment> findByBillId(UUID billId);

@@ -21,7 +21,7 @@ public interface ShiftRepository extends ReactiveCrudRepository<Shift, UUID>, Sh
     Flux<Shift> findByBranch(UUID id);
 
     @Query("SELECT * FROM shift entity WHERE entity.branch_id IS NULL")
-    Flux<Shift> findAllWhereBranchIsNull();
+    Flux<Shift> findAllByBranchIsNull();
 
     @Override
     <S extends Shift> Mono<S> save(S entity);

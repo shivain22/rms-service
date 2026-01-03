@@ -19,7 +19,7 @@ public interface MenuItemVariantRepository extends ReactiveCrudRepository<MenuIt
     Flux<MenuItemVariant> findByMenuItem(UUID id);
 
     @Query("SELECT * FROM menu_item_variant entity WHERE entity.menu_item_id IS NULL")
-    Flux<MenuItemVariant> findAllWhereMenuItemIsNull();
+    Flux<MenuItemVariant> findAllByMenuItemIsNull();
 
     @Override
     <S extends MenuItemVariant> Mono<S> save(S entity);

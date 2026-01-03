@@ -19,13 +19,13 @@ public interface BillTaxRepository extends ReactiveCrudRepository<BillTax, UUID>
     Flux<BillTax> findByBill(UUID id);
 
     @Query("SELECT * FROM bill_tax entity WHERE entity.bill_id IS NULL")
-    Flux<BillTax> findAllWhereBillIsNull();
+    Flux<BillTax> findAllByBillIsNull();
 
     @Query("SELECT * FROM bill_tax entity WHERE entity.tax_config_id = :id")
     Flux<BillTax> findByTaxConfig(UUID id);
 
     @Query("SELECT * FROM bill_tax entity WHERE entity.tax_config_id IS NULL")
-    Flux<BillTax> findAllWhereTaxConfigIsNull();
+    Flux<BillTax> findAllByTaxConfigIsNull();
 
     @Override
     <S extends BillTax> Mono<S> save(S entity);
