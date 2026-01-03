@@ -19,7 +19,7 @@ public interface OrderItemRepository extends ReactiveCrudRepository<OrderItem, U
     Flux<OrderItem> findByOrder(UUID id);
 
     @Query("SELECT * FROM order_item entity WHERE entity.order_id IS NULL")
-    Flux<OrderItem> findAllWhereOrderIsNull();
+    Flux<OrderItem> findAllByOrderIsNull();
 
     @Query("SELECT * FROM order_item entity WHERE entity.menu_item_id = :id")
     Flux<OrderItem> findByMenuItem(UUID id);

@@ -21,7 +21,7 @@ public interface BillRepository extends ReactiveCrudRepository<Bill, UUID>, Bill
     Flux<Bill> findByOrder(UUID id);
 
     @Query("SELECT * FROM bill entity WHERE entity.order_id IS NULL")
-    Flux<Bill> findAllWhereOrderIsNull();
+    Flux<Bill> findAllByOrderIsNull();
 
     @Query("SELECT * FROM bill entity WHERE entity.branch_id = :id")
     Flux<Bill> findByBranch(UUID id);

@@ -20,7 +20,7 @@ public interface OrderStatusHistoryRepository
     Flux<OrderStatusHistory> findByOrder(UUID id);
 
     @Query("SELECT * FROM order_status_history entity WHERE entity.order_id IS NULL")
-    Flux<OrderStatusHistory> findAllWhereOrderIsNull();
+    Flux<OrderStatusHistory> findAllByOrderIsNull();
 
     @Override
     <S extends OrderStatusHistory> Mono<S> save(S entity);
