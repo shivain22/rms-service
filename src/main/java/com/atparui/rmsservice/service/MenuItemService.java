@@ -178,7 +178,7 @@ public class MenuItemService {
     @Transactional(readOnly = true)
     public Flux<MenuItemDTO> findByCategoryId(UUID categoryId) {
         LOG.debug("Request to find MenuItems by category ID : {}", categoryId);
-        return menuItemRepository.findByCategoryId(categoryId).map(menuItemMapper::toDto);
+        return menuItemRepository.findByMenuCategoryId(categoryId).map(menuItemMapper::toDto);
     }
 
     /**
