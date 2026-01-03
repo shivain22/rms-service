@@ -17,6 +17,8 @@ import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.elasticsearch.repository.config.EnableReactiveElasticsearchRepositories;
 import org.springframework.data.r2dbc.convert.MappingR2dbcConverter;
 import org.springframework.data.r2dbc.convert.R2dbcCustomConversions;
+import org.springframework.data.r2dbc.core.DefaultReactiveDataAccessStrategy;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.r2dbc.dialect.DialectResolver;
 import org.springframework.data.r2dbc.dialect.R2dbcDialect;
 import org.springframework.data.r2dbc.mapping.R2dbcMappingContext;
@@ -24,6 +26,7 @@ import org.springframework.data.r2dbc.query.UpdateMapper;
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.data.relational.core.dialect.RenderContextFactory;
 import org.springframework.data.relational.core.sql.render.SqlRenderer;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -81,6 +84,29 @@ public class DatabaseConfiguration {
     public SqlRenderer sqlRenderer(R2dbcDialect dialect) {
         RenderContextFactory factory = new RenderContextFactory(dialect);
         return SqlRenderer.create(factory.createRenderContext());
+    }
+
+    /**
+     * Creates DatabaseClient bean.
+     * Required because R2dbcAutoConfiguration is excluded.
+     */
+    @Bean
+    public DatabaseClient databaseClient(ConnectionFactory connectionFactory) {
+        return DatabaseClient.create(connectionFactory);
+    }
+
+    /**
+     * Creates R2dbcEntityTemplate bean.
+     * Required because R2dbcAutoConfiguration is excluded, so this bean is not auto-configured.
+     */
+    @Bean
+    public R2dbcEntityTemplate r2dbcEntityTemplate(
+        DatabaseClient databaseClient,
+        R2dbcDialect dialect,
+        MappingR2dbcConverter mappingR2dbcConverter
+    ) {
+        DefaultReactiveDataAccessStrategy strategy = new DefaultReactiveDataAccessStrategy(dialect, mappingR2dbcConverter);
+        return new R2dbcEntityTemplate(databaseClient, strategy);
     }
 
     @WritingConverter
