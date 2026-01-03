@@ -59,14 +59,16 @@ public class ServiceDatabaseConfig {
     /**
      * Creates the ConnectionFactory bean for Service.
      * Marked @Primary only when multi-tenancy is disabled.
-     * When multi-tenancy is enabled, tenantAwareConnectionFactory will be @Primary instead.
+     * When multi-tenancy is enabled, this bean is NOT created (tenantAwareConnectionFactory will be @Primary instead).
      * Uses @ConditionalOnProperty to explicitly check multi-tenancy status.
+     *
+     * Note: matchIfMissing=true means if the property is not set, assume multi-tenancy is disabled.
      */
     @Bean(name = "connectionFactory")
     @Primary
     @ConditionalOnProperty(prefix = "multi-tenant", name = "enabled", havingValue = "false", matchIfMissing = true)
     public ConnectionFactory connectionFactory() {
-        log.info("=== Creating PRIMARY ConnectionFactory for Service ===");
+        log.info("=== Creating PRIMARY ConnectionFactory for Service (multi-tenancy disabled) ===");
         log.info("Database: {} at {}:{}", dbName, dbHost, dbPort);
         log.info("DB_HOST from @Value: {}", dbHost);
         log.info("DB_HOST from environment: {}", System.getenv("DB_HOST"));
