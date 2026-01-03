@@ -19,6 +19,7 @@ import org.springframework.data.r2dbc.convert.MappingR2dbcConverter;
 import org.springframework.data.r2dbc.convert.R2dbcCustomConversions;
 import org.springframework.data.r2dbc.dialect.DialectResolver;
 import org.springframework.data.r2dbc.dialect.R2dbcDialect;
+import org.springframework.data.r2dbc.mapping.R2dbcMappingContext;
 import org.springframework.data.r2dbc.query.UpdateMapper;
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.data.relational.core.dialect.RenderContextFactory;
@@ -51,6 +52,24 @@ public class DatabaseConfiguration {
         // Use the injected ConnectionFactory (which will be the primary tenant-aware one if multi-tenancy is enabled).
         // Since TenantAwareConnectionFactory now caches metadata to avoid recursion, this is safe.
         return DialectResolver.getDialect(connectionFactory);
+    }
+
+    /**
+     * Creates MappingR2dbcConverter bean.
+     * Required because R2dbcAutoConfiguration is excluded, so this bean is not auto-configured.
+     */
+    @Bean
+    public MappingR2dbcConverter mappingR2dbcConverter(R2dbcCustomConversions conversions, R2dbcMappingContext mappingContext) {
+        return new MappingR2dbcConverter(mappingContext, conversions);
+    }
+
+    /**
+     * Creates R2dbcMappingContext bean.
+     * Required because R2dbcAutoConfiguration is excluded.
+     */
+    @Bean
+    public R2dbcMappingContext r2dbcMappingContext() {
+        return new R2dbcMappingContext();
     }
 
     @Bean
