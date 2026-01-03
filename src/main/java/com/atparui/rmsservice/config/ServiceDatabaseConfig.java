@@ -7,7 +7,7 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -58,12 +58,12 @@ public class ServiceDatabaseConfig {
 
     /**
      * Creates the ConnectionFactory bean for Service.
-     * Marked @Primary only when multi-tenancy is disabled to avoid conflicts with tenantAwareConnectionFactory.
+     * Marked @Primary only when tenantAwareConnectionFactory doesn't exist (i.e., multi-tenancy is disabled).
      * When multi-tenancy is enabled, tenantAwareConnectionFactory will be @Primary instead.
      */
     @Bean(name = "connectionFactory")
     @Primary
-    @ConditionalOnProperty(prefix = "multi-tenant", name = "enabled", havingValue = "false", matchIfMissing = true)
+    @ConditionalOnMissingBean(name = "tenantAwareConnectionFactory")
     public ConnectionFactory connectionFactory() {
         log.info("=== Creating PRIMARY ConnectionFactory for Service ===");
         log.info("Database: {} at {}:{}", dbName, dbHost, dbPort);
