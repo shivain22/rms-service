@@ -35,14 +35,12 @@ public interface UserRepository extends R2dbcRepository<User, String>, UserRepos
     @Query("INSERT INTO jhi_user_authority VALUES(:userId, :authority)")
     Mono<Void> saveUserAuthority(String userId, String authority);
 
-    @Query("DELETE FROM jhi_user_authority")
-    Mono<Void> resetUserAuthorityMappings();
-
     @Query("DELETE FROM jhi_user_authority WHERE user_id = :userId")
     Mono<Void> deleteUserAuthorities(String userId);
 }
 
-interface UserRepositoryInternal {
+public interface UserRepositoryInternal {
+    Mono<Void> resetUserAuthorityMappings();
     Mono<User> findOneWithAuthoritiesByLogin(String login);
 
     Mono<User> create(User user);
@@ -96,6 +94,11 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
     @Override
     public Mono<User> create(User user) {
         return r2dbcEntityTemplate.insert(User.class).using(user).defaultIfEmpty(user);
+    }
+
+    @Override
+    public Mono<Void> resetUserAuthorityMappings() {
+        return db.sql("DELETE FROM jhi_user_authority").fetch().rowsUpdated().then();
     }
 
     private Mono<User> findOneWithAuthoritiesBy(String fieldName, Object fieldValue) {

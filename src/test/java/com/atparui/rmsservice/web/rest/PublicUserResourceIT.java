@@ -6,6 +6,7 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import com.atparui.rmsservice.IntegrationTest;
 import com.atparui.rmsservice.domain.User;
 import com.atparui.rmsservice.repository.UserRepository;
+import com.atparui.rmsservice.repository.UserRepositoryInternal;
 import com.atparui.rmsservice.repository.search.UserSearchRepository;
 import com.atparui.rmsservice.security.AuthoritiesConstants;
 import java.util.Set;
@@ -54,7 +55,7 @@ class PublicUserResourceIT {
 
     @AfterEach
     void cleanupAndCheck() {
-        userRepository.resetUserAuthorityMappings().block();
+        ((UserRepositoryInternal) userRepository).resetUserAuthorityMappings().block();
         userRepository.deleteAll().block();
     }
 

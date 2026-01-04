@@ -10,6 +10,7 @@ import com.atparui.rmsservice.domain.User;
 import com.atparui.rmsservice.repository.AuthorityRepository;
 import com.atparui.rmsservice.repository.EntityManager;
 import com.atparui.rmsservice.repository.UserRepository;
+import com.atparui.rmsservice.repository.UserRepositoryInternal;
 import com.atparui.rmsservice.repository.search.UserSearchRepository;
 import com.atparui.rmsservice.security.AuthoritiesConstants;
 import com.atparui.rmsservice.service.mapper.UserMapper;
@@ -117,7 +118,7 @@ class UserResourceIT {
 
     @AfterEach
     void cleanupAndCheck() {
-        userRepository.resetUserAuthorityMappings().block();
+        ((UserRepositoryInternal) userRepository).resetUserAuthorityMappings().block();
         userRepository.deleteAll().block();
     }
 
