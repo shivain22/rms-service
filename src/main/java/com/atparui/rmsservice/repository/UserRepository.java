@@ -39,15 +39,6 @@ public interface UserRepository extends R2dbcRepository<User, String>, UserRepos
     Mono<Void> deleteUserAuthorities(String userId);
 }
 
-interface UserRepositoryInternal {
-    Mono<Void> resetUserAuthorityMappings();
-    Mono<User> findOneWithAuthoritiesByLogin(String login);
-
-    Mono<User> create(User user);
-
-    Flux<User> findAllWithAuthorities(Pageable pageable);
-}
-
 class UserRepositoryInternalImpl implements UserRepositoryInternal {
 
     private final DatabaseClient db;
