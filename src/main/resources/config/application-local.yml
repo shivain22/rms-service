@@ -70,7 +70,7 @@ spring:
     url: ${SPRING_LIQUIBASE_URL:jdbc:postgresql://localhost:5434/rms_service?currentSchema=public}
     user: ${SPRING_LIQUIBASE_USER:rms_service}
     password: ${SPRING_LIQUIBASE_PASSWORD:rms_service}
-    default-schema-name: ${SPRING_LIQUIBASE_DEFAULT_SCHEMA:public}
+    default-schema: ${SPRING_LIQUIBASE_DEFAULT_SCHEMA:public}
 
   # Infrastructure Services (all via SSH tunnels to localhost)
   cloud:
