@@ -89,6 +89,7 @@ public class TenantContextFilter implements WebFilter {
 
     private boolean isPublicEndpoint(String path) {
         return (
+            path.startsWith("/actuator/health") ||
             path.startsWith("/management/health") ||
             path.startsWith("/management/info") ||
             path.startsWith("/management/jhiopenapigroups") ||
