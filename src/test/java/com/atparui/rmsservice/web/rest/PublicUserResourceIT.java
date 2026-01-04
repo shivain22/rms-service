@@ -54,7 +54,7 @@ class PublicUserResourceIT {
 
     @AfterEach
     void cleanupAndCheck() {
-        userRepository.deleteAllUserAuthorities().block();
+        userRepository.removeAllUserAuthorityMappings().block();
         userRepository.deleteAll().block();
     }
 
