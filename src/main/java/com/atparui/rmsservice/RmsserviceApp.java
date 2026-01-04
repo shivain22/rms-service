@@ -93,6 +93,13 @@ public class RmsserviceApp {
         } catch (UnknownHostException e) {
             LOG.warn("The host name could not be determined, using `localhost` as fallback");
         }
+        // Get build version information
+        String buildVersion = env.getProperty("jhipster.build.short-version", env.getProperty("jhipster.api-docs.version", "0.0.1"));
+        String buildCommitHash = env.getProperty("jhipster.build.commit-hash", "unknown");
+        String buildCommitCount = env.getProperty("jhipster.build.commit-count", "0");
+        String buildBranch = env.getProperty("jhipster.build.branch", "unknown");
+        String buildTimestamp = env.getProperty("jhipster.build.timestamp", "unknown");
+
         LOG.info(
             CRLFLogConverter.CRLF_SAFE_MARKER,
             """
@@ -102,6 +109,8 @@ public class RmsserviceApp {
             \tLocal: \t\t{}://localhost:{}{}
             \tExternal: \t{}://{}:{}{}
             \tProfile(s): \t{}
+            \tVersion: \t{} (commit: {}, count: {}, branch: {})
+            \tBuild Time: \t{}
             ----------------------------------------------------------""",
             applicationName,
             protocol,
@@ -111,7 +120,12 @@ public class RmsserviceApp {
             hostAddress,
             serverPort,
             contextPath,
-            env.getActiveProfiles().length == 0 ? env.getDefaultProfiles() : env.getActiveProfiles()
+            env.getActiveProfiles().length == 0 ? env.getDefaultProfiles() : env.getActiveProfiles(),
+            buildVersion,
+            buildCommitHash,
+            buildCommitCount,
+            buildBranch,
+            buildTimestamp
         );
 
         String configServerStatus = env.getProperty("configserver.status");

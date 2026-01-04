@@ -27,6 +27,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <!-- Build version properties (can be overridden via -Dbuild.version, etc. during build) -->
+        <build.version>${build.version:${project.version}-${maven.build.timestamp}}</build.version>
+        <build.short.version>${build.short.version:${project.version}}</build.short.version>
+        <build.commit.hash>${build.commit.hash:${git.commit.id.abbrev:unknown}}</build.commit.hash>
+        <build.commit.count>${build.commit.count:0}</build.commit.count>
+        <build.branch>${build.branch:${git.branch:unknown}}</build.branch>
+        <build.timestamp>${build.timestamp:${maven.build.timestamp}}</build.timestamp>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <start-class>com.atparui.rmsservice.RmsserviceApp</start-class>
