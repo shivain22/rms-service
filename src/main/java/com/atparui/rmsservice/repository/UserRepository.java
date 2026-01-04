@@ -31,9 +31,6 @@ public interface UserRepository extends R2dbcRepository<User, String>, UserRepos
     Flux<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable);
 
     Mono<Long> count();
-
-    @Query("INSERT INTO jhi_user_authority VALUES(:userId, :authority)")
-    Mono<Void> saveUserAuthority(String userId, String authority);
 }
 
 class UserRepositoryInternalImpl implements UserRepositoryInternal {
@@ -92,6 +89,17 @@ class UserRepositoryInternalImpl implements UserRepositoryInternal {
     @Override
     public Mono<Void> deleteUserAuthorities(String userId) {
         return db.sql("DELETE FROM jhi_user_authority WHERE user_id = :userId").bind("userId", userId).fetch().rowsUpdated().then();
+    }
+
+    @Override
+    public Mono<Void> saveUserAuthority(String userId, String authority) {
+        return db
+            .sql("INSERT INTO jhi_user_authority VALUES(:userId, :authority)")
+            .bind("userId", userId)
+            .bind("authority", authority)
+            .fetch()
+            .rowsUpdated()
+            .then();
     }
 
     private Mono<User> findOneWithAuthoritiesBy(String fieldName, Object fieldValue) {

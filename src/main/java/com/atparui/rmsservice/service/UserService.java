@@ -5,6 +5,7 @@ import com.atparui.rmsservice.domain.Authority;
 import com.atparui.rmsservice.domain.User;
 import com.atparui.rmsservice.repository.AuthorityRepository;
 import com.atparui.rmsservice.repository.UserRepository;
+import com.atparui.rmsservice.repository.UserRepositoryInternal;
 import com.atparui.rmsservice.repository.search.UserSearchRepository;
 import com.atparui.rmsservice.security.SecurityUtils;
 import com.atparui.rmsservice.service.dto.AdminUserDTO;
@@ -97,7 +98,9 @@ public class UserService {
                 }
                 return persistedUser.flatMap(savedUser ->
                     Flux.fromIterable(user.getAuthorities())
-                        .flatMap(authority -> userRepository.saveUserAuthority(savedUser.getId(), authority.getName()))
+                        .flatMap(authority ->
+                            ((UserRepositoryInternal) userRepository).saveUserAuthority(savedUser.getId(), authority.getName())
+                        )
                         .then(Mono.just(savedUser))
                 );
             });

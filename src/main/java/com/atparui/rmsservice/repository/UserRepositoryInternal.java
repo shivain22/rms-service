@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 public interface UserRepositoryInternal {
     Mono<Void> resetUserAuthorityMappings();
     Mono<Void> deleteUserAuthorities(String userId);
+    Mono<Void> saveUserAuthority(String userId, String authority);
     Mono<User> findOneWithAuthoritiesByLogin(String login);
     Mono<User> create(User user);
     Flux<User> findAllWithAuthorities(Pageable pageable);
