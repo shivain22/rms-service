@@ -36,7 +36,7 @@ public interface UserRepository extends R2dbcRepository<User, String>, UserRepos
     Mono<Void> saveUserAuthority(String userId, String authority);
 
     @Query("DELETE FROM jhi_user_authority")
-    Mono<Void> removeAllUserAuthorityMappings();
+    Mono<Void> resetUserAuthorityMappings();
 
     @Query("DELETE FROM jhi_user_authority WHERE user_id = :userId")
     Mono<Void> deleteUserAuthorities(String userId);

@@ -117,7 +117,7 @@ class UserResourceIT {
 
     @AfterEach
     void cleanupAndCheck() {
-        userRepository.removeAllUserAuthorityMappings().block();
+        userRepository.resetUserAuthorityMappings().block();
         userRepository.deleteAll().block();
     }
 
