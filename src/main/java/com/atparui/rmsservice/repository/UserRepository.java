@@ -39,7 +39,7 @@ public interface UserRepository extends R2dbcRepository<User, String>, UserRepos
     Mono<Void> deleteUserAuthorities(String userId);
 }
 
-public interface UserRepositoryInternal {
+interface UserRepositoryInternal {
     Mono<Void> resetUserAuthorityMappings();
     Mono<User> findOneWithAuthoritiesByLogin(String login);
 
