@@ -7,8 +7,8 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
-import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,18 +25,29 @@ public class LiquibaseConfiguration {
 
     private final Environment env;
 
+    @Value("${DB_HOST:rms-postgresql}")
+    private String dbHost;
+
+    @Value("${DB_PORT:5432}")
+    private int dbPort;
+
+    @Value("${DB_USERNAME:rms_service}")
+    private String dbUsername;
+
+    @Value("${DB_PASSWORD:rms_service}")
+    private String dbPassword;
+
+    @Value("${DB_NAME:rms_service}")
+    private String dbName;
+
     public LiquibaseConfiguration(Environment env) {
         this.env = env;
     }
 
     @Bean
-    public SpringLiquibase liquibase(
-        @Qualifier("taskExecutor") Executor executor,
-        LiquibaseProperties liquibaseProperties,
-        R2dbcProperties dataSourceProperties
-    ) {
+    public SpringLiquibase liquibase(@Qualifier("taskExecutor") Executor executor, LiquibaseProperties liquibaseProperties) {
         SpringLiquibase liquibase = new AsyncSpringLiquibase(executor, env);
-        liquibase.setDataSource(createLiquibaseDataSource(liquibaseProperties, dataSourceProperties));
+        liquibase.setDataSource(createLiquibaseDataSource(liquibaseProperties));
         liquibase.setChangeLog("classpath:config/liquibase/master.xml");
         if (!CollectionUtils.isEmpty(liquibaseProperties.getContexts())) {
             liquibase.setContexts(StringUtils.collectionToCommaDelimitedString(liquibaseProperties.getContexts()));
@@ -62,10 +73,17 @@ public class LiquibaseConfiguration {
         return liquibase;
     }
 
-    private static DataSource createLiquibaseDataSource(LiquibaseProperties liquibaseProperties, R2dbcProperties dataSourceProperties) {
-        String user = Optional.ofNullable(liquibaseProperties.getUser()).orElse(dataSourceProperties.getUsername());
-        String password = Optional.ofNullable(liquibaseProperties.getPassword()).orElse(dataSourceProperties.getPassword());
+    private DataSource createLiquibaseDataSource(LiquibaseProperties liquibaseProperties) {
+        // Build JDBC URL from properties
+        String jdbcUrl = Optional.ofNullable(liquibaseProperties.getUrl()).orElse(
+            String.format("jdbc:postgresql://%s:%d/%s", dbHost, dbPort, dbName)
+        );
 
-        return DataSourceBuilder.create().url(liquibaseProperties.getUrl()).username(user).password(password).build();
+        String user = Optional.ofNullable(liquibaseProperties.getUser()).orElse(dbUsername);
+        String password = Optional.ofNullable(liquibaseProperties.getPassword()).orElse(dbPassword);
+
+        LOG.info("Creating Liquibase DataSource: {}@{}:{}/{}", user, dbHost, dbPort, dbName);
+
+        return DataSourceBuilder.create().url(jdbcUrl).username(user).password(password).build();
     }
 }
