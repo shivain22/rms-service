@@ -78,6 +78,7 @@ public class SecurityConfiguration {
                     .pathMatchers("/management/health/**").permitAll()
                     .pathMatchers("/management/info").permitAll()
                     .pathMatchers("/management/prometheus").permitAll()
+                    .pathMatchers("/management/jhiopenapigroups").permitAll()
                     .pathMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
             )
             .oauth2Client(withDefaults())
