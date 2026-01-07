@@ -8,52 +8,50 @@ import reactor.core.publisher.Mono;
 
 /**
  * Provides the appropriate ConnectionFactory based on the current tenant context.
+ * Now uses TenantConnectionProvider to support both R2DBC and JDBC tenants.
  */
 @Component
 public class TenantConnectionFactoryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(TenantConnectionFactoryProvider.class);
 
-    private final TenantConnectionManager connectionManager;
+    private final TenantConnectionProvider connectionProvider;
     private final MultiTenantProperties properties;
 
-    public TenantConnectionFactoryProvider(TenantConnectionManager connectionManager, MultiTenantProperties properties) {
-        this.connectionManager = connectionManager;
+    public TenantConnectionFactoryProvider(TenantConnectionProvider connectionProvider, MultiTenantProperties properties) {
+        this.connectionProvider = connectionProvider;
         this.properties = properties;
     }
 
     /**
      * Get ConnectionFactory for the current tenant from Reactor Context.
+     * Returns empty if tenant uses JDBC (not R2DBC).
      *
-     * @return Mono containing ConnectionFactory
+     * @return Mono containing ConnectionFactory, or empty if tenant uses JDBC
      */
     public Mono<ConnectionFactory> getConnectionFactory() {
-        return TenantContextHolder.getCurrentTenantId()
-            .flatMap(tenantId -> {
-                LOG.debug("Getting connection factory for tenant: {}", tenantId);
-                return connectionManager.getConnectionFactory(tenantId);
-            })
-            .switchIfEmpty(handleMissingTenant());
+        return connectionProvider.getR2dbcConnectionFactory();
     }
 
     /**
      * Get ConnectionFactory for a specific tenant ID.
+     * Returns empty if tenant uses JDBC (not R2DBC).
      *
      * @param tenantId the tenant ID
-     * @return Mono containing ConnectionFactory
+     * @return Mono containing ConnectionFactory, or empty if tenant uses JDBC
      */
     public Mono<ConnectionFactory> getConnectionFactory(String tenantId) {
         if (tenantId == null || tenantId.isBlank()) {
             return handleMissingTenant();
         }
-        return connectionManager.getConnectionFactory(tenantId);
+        return connectionProvider.getR2dbcConnectionFactory(tenantId);
     }
 
     private Mono<ConnectionFactory> handleMissingTenant() {
         if (properties.getFallback().isEnabled()) {
             String defaultTenantId = properties.getFallback().getDefaultTenantId();
             LOG.warn("Tenant ID not found in context, using fallback tenant: {}", defaultTenantId);
-            return connectionManager.getConnectionFactory(defaultTenantId);
+            return connectionProvider.getR2dbcConnectionFactory(defaultTenantId);
         } else {
             LOG.error("Tenant ID not found in context and fallback is disabled");
             return Mono.error(new IllegalStateException("Tenant ID is required but not found in request context"));

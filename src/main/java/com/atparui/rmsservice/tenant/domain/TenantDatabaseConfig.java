@@ -31,6 +31,9 @@ public class TenantDatabaseConfig implements Serializable {
     @JsonProperty("validationQuery")
     private String validationQuery = "SELECT 1";
 
+    @JsonProperty("driverType")
+    private String driverType = "R2DBC"; // Default to R2DBC for backward compatibility
+
     @JsonProperty("clients")
     private java.util.List<TenantClientConfig> clients;
 
@@ -96,6 +99,28 @@ public class TenantDatabaseConfig implements Serializable {
 
     public void setValidationQuery(String validationQuery) {
         this.validationQuery = validationQuery;
+    }
+
+    public String getDriverType() {
+        return driverType;
+    }
+
+    public void setDriverType(String driverType) {
+        this.driverType = driverType != null ? driverType.toUpperCase() : "R2DBC";
+    }
+
+    /**
+     * Check if this tenant uses JDBC driver.
+     */
+    public boolean isJdbc() {
+        return "JDBC".equalsIgnoreCase(driverType);
+    }
+
+    /**
+     * Check if this tenant uses R2DBC driver.
+     */
+    public boolean isR2dbc() {
+        return "R2DBC".equalsIgnoreCase(driverType);
     }
 
     public java.util.List<TenantClientConfig> getClients() {
@@ -210,6 +235,9 @@ public class TenantDatabaseConfig implements Serializable {
             maxPoolSize +
             ", connectionTimeout=" +
             connectionTimeout +
+            ", driverType='" +
+            driverType +
+            '\'' +
             ", keycloakBaseUrl='" +
             keycloakBaseUrl +
             '\'' +
